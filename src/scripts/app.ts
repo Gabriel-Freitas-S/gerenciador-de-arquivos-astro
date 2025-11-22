@@ -301,17 +301,19 @@ function renderStorage() {
 	if (!dom.storageTable) return;
 	dom.storageTable.innerHTML = '';
 	if (state.storage.length === 0) {
-		dom.storageTable.innerHTML = '<tr><td colspan="5">Nenhuma unidade cadastrada ainda.</td></tr>';
+		dom.storageTable.innerHTML =
+			'<tr><td class="px-4 py-3 text-center text-white/60" colspan="5">Nenhuma unidade cadastrada ainda.</td></tr>';
 		return;
 	}
 	for (const unit of state.storage) {
 		const row = document.createElement('tr');
+		row.className = 'border-t border-white/5';
 		row.innerHTML = `
-			<td>${unit.label}</td>
-			<td>${typeLabels[unit.type]}</td>
-			<td>${unit.section ?? '—'}</td>
-			<td>${unit.occupancy}/${unit.capacity}</td>
-			<td>${new Date(unit.updated_at).toLocaleString('pt-BR')}</td>
+			<td class="px-4 py-3">${unit.label}</td>
+			<td class="px-4 py-3">${typeLabels[unit.type]}</td>
+			<td class="px-4 py-3">${unit.section ?? '—'}</td>
+			<td class="px-4 py-3">${unit.occupancy}/${unit.capacity}</td>
+			<td class="px-4 py-3">${new Date(unit.updated_at).toLocaleString('pt-BR')}</td>
 		`;
 		dom.storageTable.appendChild(row);
 	}
@@ -321,16 +323,18 @@ function renderMovements() {
 	if (!dom.movementList) return;
 	dom.movementList.innerHTML = '';
 	if (state.movements.length === 0) {
-		dom.movementList.innerHTML = '<li class="empty">Registre a primeira movimentação do dia.</li>';
+		dom.movementList.innerHTML =
+			'<li class="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-sm text-white/70">Registre a primeira movimentação do dia.</li>';
 		return;
 	}
 	for (const movement of state.movements) {
 		const item = document.createElement('li');
-		item.className = 'movement-item';
+		item.className =
+			'rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80 shadow-inner shadow-white/5';
 		item.innerHTML = `
-			<strong>${movement.action}</strong>
-			<span>${movement.reference ?? 'Sem ref.'} · ${new Date(movement.created_at).toLocaleString('pt-BR')}</span>
-			<p>${movement.note ?? 'Sem observações.'}</p>
+			<strong class="text-base font-semibold text-white">${movement.action}</strong>
+			<span class="mt-1 block text-xs text-white/60">${movement.reference ?? 'Sem ref.'} · ${new Date(movement.created_at).toLocaleString('pt-BR')}</span>
+			<p class="mt-2 text-sm text-white/80">${movement.note ?? 'Sem observações.'}</p>
 		`;
 		dom.movementList.appendChild(item);
 	}

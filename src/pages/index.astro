@@ -8,14 +8,20 @@ import MovementPanel from '../components/app/MovementPanel.astro';
 ---
 
 <Layout>
-	<main class="app-shell">
+	<main
+		class="page-shell flex min-h-screen w-full flex-col gap-10 px-4 py-10 sm:px-6 lg:px-12 lg:py-16 2xl:px-20"
+	>
 		<AuthGate />
-		<section data-section="app" class="app-content" data-hidden="true">
+		<section
+			data-section="app"
+			data-hidden="true"
+			class="mx-auto w-full max-w-7xl space-y-8 rounded-[32px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:p-8"
+		>
 			<AppHeader />
-			<section class="dashboard" data-guarded>
+			<section data-guarded class="space-y-6">
 				<SummaryPanel />
 			</section>
-			<section class="data-grid" data-guarded>
+			<section data-guarded class="grid gap-6 lg:grid-cols-2 xl:[grid-template-columns:1.15fr_0.85fr]">
 				<StoragePanel />
 				<MovementPanel />
 			</section>

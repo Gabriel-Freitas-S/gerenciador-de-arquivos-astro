@@ -1,15 +1,24 @@
-<header class="app-header">
-	<div>
-		<p class="app-eyebrow">Arquivo Inteligente</p>
-		<h1>Gerencie pastas, envelopes e movimentações em um só lugar.</h1>
-		<p class="app-subtitle">
-			Controle o arquivo físico do seu escritório com rastreabilidade, histórico e cadastros
-			centralizados.
+<header
+	class="flex flex-col gap-6 rounded-[28px] border border-white/10 bg-slate-900/40 p-6 text-white shadow-xl shadow-black/40 lg:flex-row lg:items-center lg:justify-between"
+>
+	<div class="space-y-3">
+		<p class="text-xs uppercase tracking-[0.35em] text-sky-200">Arquivo Inteligente</p>
+		<h1 class="text-3xl font-semibold leading-tight">
+			Gerencie pastas, envelopes e movimentações em um só lugar.
+		</h1>
+		<p class="text-base text-white/70">
+			Controle o arquivo físico do seu escritório com rastreabilidade, histórico e cadastros centralizados.
 		</p>
 	</div>
-	<div class="status-card">
-		<strong id="welcome-box">Faça login para começar</strong>
-		<span id="auth-info">Sessão não iniciada</span>
-		<button id="logout-button" type="button">Encerrar sessão</button>
+	<div class="flex min-w-[240px] flex-col rounded-2xl border border-white/10 bg-slate-950/40 p-5 text-white/80 shadow-inner shadow-white/5">
+		<strong id="welcome-box" class="text-lg font-semibold text-white">Faça login para começar</strong>
+		<span id="auth-info" class="text-sm text-white/70">Sessão não iniciada</span>
+		<button
+			id="logout-button"
+			type="button"
+			class="mt-4 inline-flex items-center justify-center rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/80 transition hover:border-white/40 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+		>
+			Encerrar sessão
+		</button>
 	</div>
 </header>

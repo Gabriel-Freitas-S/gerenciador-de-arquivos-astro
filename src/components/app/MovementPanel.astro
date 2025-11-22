@@ -1,46 +1,76 @@
-<article class="panel">
-	<header>
-		<div>
-			<h2>Movimentações</h2>
-			<p>Histórico de retirada, devolução e circulação.</p>
-		</div>
+<article class="rounded-[28px] border border-white/10 bg-slate-950/35 p-6 text-white shadow-lg shadow-black/40">
+	<header class="space-y-1">
+		<h2 class="text-2xl font-semibold">Movimentações</h2>
+		<p class="text-white/70">Histórico de retirada, devolução e circulação.</p>
 	</header>
-	<form id="movement-form" class="stack">
-		<label>
+	<form id="movement-form" class="mt-6 grid gap-4 md:grid-cols-2">
+		<label class="flex flex-col gap-2 text-sm text-white/80 md:col-span-2">
 			<span>Ação realizada</span>
-			<input name="action" placeholder="Retirada de pasta" required />
+			<input
+				name="action"
+				placeholder="Retirada de pasta"
+				required
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			/>
 		</label>
-		<div class="inline">
-			<label>
-				<span>Referência</span>
-				<input name="reference" placeholder="Proc. 1234/2025" />
-			</label>
-			<label>
-				<span>Item</span>
-				<input name="item_label" placeholder="Envelope Financeiro" />
-			</label>
-		</div>
-		<div class="inline">
-			<label>
-				<span>Origem</span>
-				<select name="from_unit" data-storage-select>
-					<option value="">—</option>
-				</select>
-			</label>
-			<label>
-				<span>Destino</span>
-				<select name="to_unit" data-storage-select>
-					<option value="">—</option>
-				</select>
-			</label>
-		</div>
-		<label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
+			<span>Referência</span>
+			<input
+				name="reference"
+				placeholder="Proc. 1234/2025"
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			/>
+		</label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
+			<span>Item</span>
+			<input
+				name="item_label"
+				placeholder="Envelope Financeiro"
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			/>
+		</label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
+			<span>Origem</span>
+			<select
+				name="from_unit"
+				data-storage-select
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			>
+				<option value="">—</option>
+			</select>
+		</label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
+			<span>Destino</span>
+			<select
+				name="to_unit"
+				data-storage-select
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			>
+				<option value="">—</option>
+			</select>
+		</label>
+		<label class="flex flex-col gap-2 text-sm text-white/80 md:col-span-2">
 			<span>Observações</span>
-			<textarea name="note" rows="3" placeholder="Detalhe a movimentação"></textarea>
+			<textarea
+				name="note"
+				rows="3"
+				placeholder="Detalhe a movimentação"
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			></textarea>
 		</label>
-		<button type="submit">Registrar movimentação</button>
+		<button
+			type="submit"
+			class="inline-flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-400 px-4 py-3 font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 md:col-span-2"
+		>
+			Registrar movimentação
+		</button>
 	</form>
-	<ul id="movement-list" class="movement-list">
-		<li class="empty">Sem movimentações registradas.</li>
+	<ul
+		id="movement-list"
+		class="mt-6 flex flex-col gap-3"
+	>
+		<li class="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-sm text-white/70">
+			Sem movimentações registradas.
+		</li>
 	</ul>
 </article>

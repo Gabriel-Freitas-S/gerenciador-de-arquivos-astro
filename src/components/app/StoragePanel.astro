@@ -1,48 +1,72 @@
-<article class="panel">
-	<header>
-		<div>
-			<h2>Unidades de guarda</h2>
-			<p>Cadastre pastas, envelopes, gaveteiros e caixas.</p>
-		</div>
+<article class="rounded-[28px] border border-white/10 bg-slate-950/35 p-6 text-white shadow-lg shadow-black/40">
+	<header class="space-y-1">
+		<h2 class="text-2xl font-semibold">Unidades de guarda</h2>
+		<p class="text-white/70">Cadastre pastas, envelopes, gaveteiros e caixas.</p>
 	</header>
-	<form id="storage-form" class="stack inline">
-		<label>
+	<form
+		id="storage-form"
+		class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5"
+	>
+		<label class="flex flex-col gap-2 text-sm text-white/80 sm:col-span-2 xl:col-span-2">
 			<span>Identificador</span>
-			<input name="label" placeholder="Gaveteiro A-01" required />
+			<input
+				name="label"
+				placeholder="Gaveteiro A-01"
+				required
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			/>
 		</label>
-		<label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
 			<span>Tipo</span>
-			<select name="type">
+			<select
+				name="type"
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			>
 				<option value="PASTA">Pasta</option>
 				<option value="ENVELOPE">Envelope</option>
 				<option value="GAVETEIRO">Gaveteiro</option>
 				<option value="CAIXA">Caixa</option>
 			</select>
 		</label>
-		<label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
 			<span>Seção</span>
-			<input name="section" placeholder="Corredor 3" />
+			<input
+				name="section"
+				placeholder="Corredor 3"
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			/>
 		</label>
-		<label>
+		<label class="flex flex-col gap-2 text-sm text-white/80">
 			<span>Capacidade</span>
-			<input type="number" min="0" name="capacity" value="0" />
+			<input
+				type="number"
+				min="0"
+				name="capacity"
+				value="0"
+				class="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+			/>
 		</label>
-		<button type="submit">Cadastrar</button>
+		<button
+			type="submit"
+			class="inline-flex h-full items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-400 px-4 py-3 font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300 sm:col-span-2 xl:col-span-1"
+		>
+			Cadastrar
+		</button>
 	</form>
-	<div class="table-wrapper">
-		<table>
-			<thead>
+	<div class="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/25">
+		<table class="w-full border-collapse text-left text-sm text-white/80">
+			<thead class="bg-white/5 text-white/70">
 				<tr>
-					<th>Identificador</th>
-					<th>Tipo</th>
-					<th>Seção</th>
-					<th>Ocupação</th>
-					<th>Atualizado</th>
+					<th class="px-4 py-3 font-medium">Identificador</th>
+					<th class="px-4 py-3 font-medium">Tipo</th>
+					<th class="px-4 py-3 font-medium">Seção</th>
+					<th class="px-4 py-3 font-medium">Ocupação</th>
+					<th class="px-4 py-3 font-medium">Atualizado</th>
 				</tr>
 			</thead>
-			<tbody id="storage-table-body">
+			<tbody id="storage-table-body" class="divide-y divide-white/5">
 				<tr>
-					<td colspan="5">Nenhum registro encontrado.</td>
+					<td class="px-4 py-3" colspan="5">Nenhum registro encontrado.</td>
 				</tr>
 			</tbody>
 		</table>
