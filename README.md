@@ -68,7 +68,7 @@ src/
 ├── layouts/Layout.astro # layout principal com carregamento do app.ts
 ├── pages/index.astro    # dashboard com login, cadastros e timeline
 ├── scripts/app.ts       # ponto de entrada da lógica de UI/IPC
-└── styles/app.css       # estilos globais do shell do aplicativo
+└── styles/global.css    # Tailwind + estilos globais do shell
 ```
 
 Outros arquivos importantes:
@@ -76,6 +76,13 @@ Outros arquivos importantes:
 - `.env.example`: modelo com `ARCHIVE_DB_KEY` e credenciais padrão.
 - `astro.config.mjs`: integrações Astro + Electron e pontos de entrada.
 - `package.json`: scripts (`npm run dev`, `npm run build`) e dependências.
+
+## 🎨 Tailwind 4 pronto para uso
+
+- Tailwind foi instalado via `astro add tailwind`, então nenhuma configuração manual adicional é necessária.
+- `src/styles/global.css` importa `tailwindcss`, registra tokens via `@theme` e mantém os estilos do dashboard.
+- Ao criar novos componentes, basta usar classes utilitárias (ex.: `class="flex gap-4"`) ou adicionar regras dedicadas nesse arquivo.
+- Caso precise extender o tema, adicione variáveis em `@theme { ... }` e utilize-as em utilitários como `bg-[color:var(--color-app-surface)]`.
 
 ## 🔐 Fluxo atual
 

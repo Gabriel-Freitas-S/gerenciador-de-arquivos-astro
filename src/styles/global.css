@@ -1,22 +1,32 @@
-:root {
-	font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-	color: #eef2ff;
-	background-color: #05060a;
+@import "tailwindcss";
+
+@theme {
+	--font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+	--color-app-foreground: #eef2ff;
+	--color-app-surface: #05060a;
 }
 
-* {
-	box-sizing: border-box;
-}
+@layer base {
+	:root {
+		font-family: var(--font-sans);
+		color: var(--color-app-foreground);
+		background-color: var(--color-app-surface);
+	}
 
-html,
-body {
-	margin: 0;
-	width: 100%;
-	height: 100%;
-}
+	* {
+		box-sizing: border-box;
+	}
 
-body {
-	background: radial-gradient(circle at top, #1d2030, #05060a 60%);
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	body {
+		background: radial-gradient(circle at top, #1d2030, #05060a 60%);
+	}
 }
 
 .app-shell {
