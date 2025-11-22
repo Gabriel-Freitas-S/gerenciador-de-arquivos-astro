@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Arquivo Inteligente",
+  "version": "0.1.0",
+  "identifier": "com.gabriel.freitas.arquivo",
+  "build": {
+    "beforeDevCommand": "npm run dev:astro",
+    "beforeBuildCommand": "npm run build:astro",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:4321"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "center": true,
+        "width": 1280,
+        "height": 900,
+        "minWidth": 1100,
+        "minHeight": 720,
+        "resizable": true,
+        "title": "Arquivo Inteligente"
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "digestAlgorithm": "sha256",
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper",
+        "silent": true
+      }
+    }
+  }
+}

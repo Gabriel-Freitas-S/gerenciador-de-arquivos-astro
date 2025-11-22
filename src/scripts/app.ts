@@ -1,9 +1,11 @@
+import { archiveApi } from './archive-api.js';
 import type {
 	MovementRecord,
 	SnapshotSummary,
 	StorageUnitRecord,
 	StorageUnitType,
-} from '../electron/types.js';
+	LoginResult,
+} from '../types/archive.js';
 
 const STORAGE_KEY = 'archive::token';
 
@@ -14,12 +16,7 @@ const typeLabels: Record<StorageUnitType, string> = {
 	CAIXA: 'Caixa/Arquivo',
 };
 
-type UserProfile = {
-	id: number;
-	name: string;
-	login: string;
-	role: string;
-};
+type UserProfile = LoginResult['profile'];
 
 type AppState = {
 	token: string | null;
@@ -76,7 +73,7 @@ function bindEvents() {
 
 	dom.logoutButton?.addEventListener('click', async () => {
 		if (!state.token) return;
-		await window.archive.logout(state.token);
+		await archiveApi.logout(state.token);
 		state.token = null;
 		state.snapshot = null;
 		state.profile = null;
@@ -104,7 +101,7 @@ function bindEvents() {
 
 async function resumeSession() {
 	if (!state.token) return;
-	const response = await window.archive.session(state.token);
+	const response = await archiveApi.session(state.token);
 	if (!response.success || !response.data) {
 		localStorage.removeItem(STORAGE_KEY);
 		state.token = null;
@@ -132,7 +129,7 @@ async function handleLogin() {
 		return;
 	}
 	setAuthError('');
-	const response = await window.archive.login({ login, password });
+	const response = await archiveApi.login({ login, password });
 	if (!response.success || !response.data) {
 		setAuthError(response.error ?? 'Falha ao autenticar.');
 		return;
@@ -153,7 +150,7 @@ async function handleLogin() {
 
 async function refreshStorage() {
 	if (!state.token) return;
-	const response = await window.archive.storage.list(state.token);
+	const response = await archiveApi.storage.list(state.token);
 	if (response.success && response.data) {
 		state.storage = response.data;
 		renderStorage();
@@ -163,7 +160,7 @@ async function refreshStorage() {
 
 async function refreshMovements() {
 	if (!state.token) return;
-	const response = await window.archive.movements.list(state.token);
+	const response = await archiveApi.movements.list(state.token);
 	if (response.success && response.data) {
 		state.movements = response.data;
 		renderMovements();
@@ -183,7 +180,7 @@ async function handleStorageCreation() {
 		showToast('Informe um identificador para a unidade', true);
 		return;
 	}
-	const response = await window.archive.storage.create(state.token, payload);
+	const response = await archiveApi.storage.create(state.token, payload);
 	if (!response.success || !response.data) {
 		showToast(response.error ?? 'Erro ao registrar unidade', true);
 		return;
@@ -212,7 +209,7 @@ async function handleMovement() {
 		showToast('Descreva a movimentação realizada', true);
 		return;
 	}
-	const response = await window.archive.movements.record(state.token, payload);
+	const response = await archiveApi.movements.record(state.token, payload);
 	if (!response.success || !response.data) {
 		showToast(response.error ?? 'Erro ao registrar movimentação', true);
 		return;

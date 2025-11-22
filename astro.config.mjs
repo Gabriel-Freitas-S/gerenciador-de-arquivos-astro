@@ -1,32 +1,11 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import electron from 'astro-electron';
 import minify from 'astro-min';
 
 import tailwindcss from '@tailwindcss/vite';
 
-const nativeModules = ['@journeyapps/sqlcipher', 'sqlite3', 'mock-aws-s3', 'aws-sdk', 'nock'];
-
 export default defineConfig({
     integrations: [
-        electron({
-            main: {
-                entry: 'src/electron/main.ts',
-                vite: {
-                    build: {
-                        commonjsOptions: {
-                            ignoreTryCatch: false,
-                        },
-                        rollupOptions: {
-                            external: nativeModules,
-                        },
-                    },
-                },
-            },
-            preload: {
-                input: 'src/electron/preload.ts',
-            },
-        }),
         minify({
             do_not_minify_doctype: false,
             ensure_spec_compliant_unquoted_attribute_values: true,

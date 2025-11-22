@@ -6,7 +6,8 @@ dist/
 
 # dependencies
 node_modules/
-dist-electron/
+target/
+src-tauri/target/
 archive.db
 
 # logs
