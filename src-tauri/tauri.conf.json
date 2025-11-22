@@ -10,7 +10,7 @@
     "devUrl": "http://localhost:4321"
   },
   "app": {
-    "withGlobalTauri": true,
+    "withGlobalTauri": false,
     "windows": [
       {
         "center": true,

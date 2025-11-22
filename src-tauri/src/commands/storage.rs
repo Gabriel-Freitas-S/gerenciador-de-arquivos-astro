@@ -5,6 +5,7 @@ use crate::types::{
     TokenPayload,
 };
 use tauri::State;
+use validator::Validate;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct StorageCreateResponse {
@@ -18,6 +19,11 @@ pub async fn storage_list(
     sessions: State<'_, SessionStore>,
     payload: TokenPayload,
 ) -> Result<ApiResponse<Vec<StorageUnitRecord>>, String> {
+    // Validate input
+    if let Err(e) = payload.validate() {
+        return Ok(ApiResponse::error(format!("Dados inválidos: {}", e)));
+    }
+
     if let Err(message) = sessions.require(&payload.token) {
         return Ok(ApiResponse::error(message));
     }
@@ -33,16 +39,15 @@ pub async fn storage_create(
     sessions: State<'_, SessionStore>,
     payload: StorageCreatePayload,
 ) -> Result<ApiResponse<StorageCreateResponse>, String> {
+    // Validate input
+    if let Err(e) = payload.validate() {
+        return Ok(ApiResponse::error(format!("Dados inválidos: {}", e)));
+    }
+
     let session = match sessions.require(&payload.token) {
         Ok(session) => session,
         Err(message) => return Ok(ApiResponse::error(message)),
     };
-    if payload.data.label.trim().len() < 2 {
-        return Ok(ApiResponse::error("Informe um identificador"));
-    }
-    if payload.data.r#type.trim().is_empty() {
-        return Ok(ApiResponse::error("Informe o tipo da unidade"));
-    }
     match db.create_storage_unit(&payload.data).await {
         Ok(unit) => {
             let movement = MovementData {

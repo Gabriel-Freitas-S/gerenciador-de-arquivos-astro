@@ -2,6 +2,7 @@ use crate::db::ArchiveDatabase;
 use crate::sessions::SessionStore;
 use crate::types::{ApiResponse, CredentialsPayload, LoginResult, TokenPayload};
 use tauri::State;
+use validator::Validate;
 
 #[tauri::command]
 pub async fn auth_login(
@@ -9,12 +10,11 @@ pub async fn auth_login(
     sessions: State<'_, SessionStore>,
     payload: CredentialsPayload,
 ) -> Result<ApiResponse<LoginResult>, String> {
-    if payload.login.trim().len() < 3 {
-        return Ok(ApiResponse::error("Informe o usuário"));
+    // Validate input
+    if let Err(e) = payload.validate() {
+        return Ok(ApiResponse::error(format!("Dados inválidos: {}", e)));
     }
-    if payload.password.trim().len() < 4 {
-        return Ok(ApiResponse::error("Senha inválida"));
-    }
+
     println!("Tentativa de login: {}", payload.login);
     match db.verify_login(&payload.login, &payload.password).await {
         Ok(Some(profile)) => {
@@ -39,6 +39,11 @@ pub async fn auth_session(
     sessions: State<'_, SessionStore>,
     payload: TokenPayload,
 ) -> Result<ApiResponse<LoginResult>, String> {
+    // Validate input
+    if let Err(e) = payload.validate() {
+        return Ok(ApiResponse::error(format!("Dados inválidos: {}", e)));
+    }
+
     match sessions.require(&payload.token) {
         Ok(session) => match db.snapshot().await {
             Ok(snapshot) => Ok(ApiResponse::success(LoginResult {
@@ -57,6 +62,11 @@ pub async fn auth_logout(
     sessions: State<'_, SessionStore>,
     payload: TokenPayload,
 ) -> Result<ApiResponse<()>, String> {
+    // Validate input
+    if let Err(e) = payload.validate() {
+        return Ok(ApiResponse::error(format!("Dados inválidos: {}", e)));
+    }
+
     sessions.revoke(&payload.token);
     Ok(ApiResponse::success(()))
 }
