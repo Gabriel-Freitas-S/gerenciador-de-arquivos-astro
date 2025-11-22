@@ -6,6 +6,8 @@ dist/
 
 # dependencies
 node_modules/
+dist-electron/
+archive.db
 
 # logs
 npm-debug.log*

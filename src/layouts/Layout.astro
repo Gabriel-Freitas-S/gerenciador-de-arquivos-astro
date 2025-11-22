@@ -1,22 +1,41 @@
+---
+const { title = 'Arquivo Inteligente' } = Astro.props;
+---
+
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
 	</head>
 	<body>
 		<slot />
+		<script type="module" src="/src/scripts/app.ts"></script>
 	</body>
 </html>
 
 <style>
+	:root {
+		font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+		color: #eef2ff;
+		background-color: #05060a;
+	}
+
+	* {
+		box-sizing: border-box;
+	}
+
 	html,
 	body {
 		margin: 0;
 		width: 100%;
 		height: 100%;
+	}
+
+	body {
+		background: radial-gradient(circle at top, #1d2030, #05060a 60%);
 	}
 </style>

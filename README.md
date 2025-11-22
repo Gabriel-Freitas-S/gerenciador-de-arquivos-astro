@@ -1,46 +1,84 @@
-# Astro Starter Kit: Basics
+# Arquivo Inteligente (Astro + Electron)
 
-```sh
-npm create astro@latest -- --template basics
+> Aplicativo desktop para Windows que combina Astro, Electron e SQLite (SQLCipher) para gerenciar pastas, envelopes, gaveteiros e movimentações de um arquivo físico com autenticação local.
+
+## 🚧 Stack principal
+
+- [Astro 5](https://astro.build/) para a camada de interface.
+- [astro-electron](https://github.com/Igloczek/astro-electron) para empacotar e executar o front-end dentro do Electron.
+- [astro-min](https://github.com/advanced-astro/min#readme) para minificar HTML/CSS/JS/SVG estáticos no build.
+- [Electron 31](https://www.electronjs.org/) como runtime desktop.
+- [@journeyapps/sqlcipher](https://github.com/journeyapps/node-sqlcipher) + `bcryptjs` para banco local criptografado e hashing de senhas.
+
+## ✅ Pré-requisitos
+
+- Node.js 20 LTS ou superior (necessário para construir os binários do Electron).
+- npm (Electron não funciona bem com pnpm ou yarn moderno).
+- Ferramentas de build do Windows (instaladas automaticamente pelo instalador do Node, se solicitado) para compilar o SQLCipher.
+
+## ⚙️ Configuração inicial
+
+1. Copie o arquivo de variáveis e defina uma chave forte para o banco:
+
+	```powershell
+	Copy-Item .env.example .env
+	# edite ARCHIVE_DB_KEY, ARCHIVE_DEFAULT_ADMIN_LOGIN e ARCHIVE_DEFAULT_ADMIN_PASSWORD
+	```
+
+2. Instale as dependências:
+
+	```powershell
+	npm install
+	```
+
+3. Execute o modo desenvolvimento (Astro + Electron são ligados automaticamente pelo `astro-electron`):
+
+	```powershell
+	npm run dev
+	```
+
+	O primeiro usuário é criado a partir das variáveis definidas em `.env` (`ARCHIVE_DEFAULT_ADMIN_LOGIN` / `ARCHIVE_DEFAULT_ADMIN_PASSWORD`) e armazena a senha com bcrypt.
+
+4. Para gerar o build de produção (renderização estática + bundle do processo principal/preload):
+
+	```powershell
+	npm run build
+	```
+
+	O resultado fica em `dist/` (renderer) e `dist-electron/` (main/preload). A publicação final pode ser feita com Electron Forge, Electron Builder ou outra ferramenta de empacotamento.
+
+## 🗂️ Estrutura relevante
+
+```
+src/
+├── electron/
+│   ├── database.ts      # conexão com SQLCipher, migrações e consultas
+│   ├── main.ts          # bootstrap do Electron + IPC
+│   ├── preload.ts       # expõe API segura para o renderer
+│   ├── sessions.ts      # gerenciamento de sessões em memória
+│   └── types.ts         # tipos compartilhados entre os processos
+├── layouts/Layout.astro # layout principal com carregamento do app.ts
+├── pages/index.astro    # dashboard com login, cadastros e timeline
+└── scripts/app.ts       # lógica de UI/IPC no renderer
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Outros arquivos importantes:
 
-## 🚀 Project Structure
+- `.env.example`: modelo com `ARCHIVE_DB_KEY` e credenciais padrão.
+- `astro.config.mjs`: integrações Astro + Electron e pontos de entrada.
+- `package.json`: scripts (`npm run dev`, `npm run dev:desktop`, `npm run build`) e dependências.
 
-Inside of your Astro project, you'll see the following folders and files:
+## 🔐 Fluxo atual
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+1. Preload expõe `window.archive.*` com canais IPC protegidos.
+2. `src/scripts/app.ts` controla login, cadastros de unidades e registro de movimentações via `window.archive`.
+3. O banco (`archive.sqlite`) é salvo em `app.getPath('userData')` e protegido por `PRAGMA key` com a chave definida em `.env`.
+4. O primeiro usuário é criado automaticamente caso a tabela esteja vazia.
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## ▶️ Próximos passos sugeridos
 
-## 🧞 Commands
+1. Adicionar empacotamento com Electron Forge/Electron Builder (atualmente não configurado).
+2. Expandir o modelo de dados (itens detalhados, anexos, auditoria).
+3. Implementar telas adicionais (busca, dashboards específicos, permissões múltiplas).
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Sinta-se à vontade para adaptar os componentes conforme os fluxos do seu arquivo físico.
