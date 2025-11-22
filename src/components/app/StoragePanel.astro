@@ -1,0 +1,50 @@
+<article class="panel">
+	<header>
+		<div>
+			<h2>Unidades de guarda</h2>
+			<p>Cadastre pastas, envelopes, gaveteiros e caixas.</p>
+		</div>
+	</header>
+	<form id="storage-form" class="stack inline">
+		<label>
+			<span>Identificador</span>
+			<input name="label" placeholder="Gaveteiro A-01" required />
+		</label>
+		<label>
+			<span>Tipo</span>
+			<select name="type">
+				<option value="PASTA">Pasta</option>
+				<option value="ENVELOPE">Envelope</option>
+				<option value="GAVETEIRO">Gaveteiro</option>
+				<option value="CAIXA">Caixa</option>
+			</select>
+		</label>
+		<label>
+			<span>Seção</span>
+			<input name="section" placeholder="Corredor 3" />
+		</label>
+		<label>
+			<span>Capacidade</span>
+			<input type="number" min="0" name="capacity" value="0" />
+		</label>
+		<button type="submit">Cadastrar</button>
+	</form>
+	<div class="table-wrapper">
+		<table>
+			<thead>
+				<tr>
+					<th>Identificador</th>
+					<th>Tipo</th>
+					<th>Seção</th>
+					<th>Ocupação</th>
+					<th>Atualizado</th>
+				</tr>
+			</thead>
+			<tbody id="storage-table-body">
+				<tr>
+					<td colspan="5">Nenhum registro encontrado.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</article>

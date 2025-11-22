@@ -1,0 +1,28 @@
+<section class="auth-gate" data-section="login">
+	<div>
+		<p class="app-eyebrow">Arquivo Inteligente</p>
+		<h1>Faça login para acessar o painel do arquivo.</h1>
+		<p class="app-subtitle">
+			Autenticação obrigatória garante rastreabilidade das movimentações e evita acessos não
+			autorizados.
+		</p>
+	</div>
+	<article class="panel auth-panel">
+		<div>
+			<h2>Acesso seguro</h2>
+			<p>Informe usuário e senha para desbloquear as funções.</p>
+		</div>
+		<form id="login-form" class="stack">
+			<label>
+				<span>Usuário</span>
+				<input type="text" id="login-identifier" placeholder="admin" autocomplete="username" required />
+			</label>
+			<label>
+				<span>Senha</span>
+				<input type="password" id="login-password" placeholder="•••••••" required />
+			</label>
+			<button type="submit">Entrar</button>
+			<span id="auth-error" class="form-error" hidden></span>
+		</form>
+	</article>
+</section>

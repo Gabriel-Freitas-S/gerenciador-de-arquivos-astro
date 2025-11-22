@@ -1,0 +1,46 @@
+<article class="panel">
+	<header>
+		<div>
+			<h2>Movimentações</h2>
+			<p>Histórico de retirada, devolução e circulação.</p>
+		</div>
+	</header>
+	<form id="movement-form" class="stack">
+		<label>
+			<span>Ação realizada</span>
+			<input name="action" placeholder="Retirada de pasta" required />
+		</label>
+		<div class="inline">
+			<label>
+				<span>Referência</span>
+				<input name="reference" placeholder="Proc. 1234/2025" />
+			</label>
+			<label>
+				<span>Item</span>
+				<input name="item_label" placeholder="Envelope Financeiro" />
+			</label>
+		</div>
+		<div class="inline">
+			<label>
+				<span>Origem</span>
+				<select name="from_unit" data-storage-select>
+					<option value="">—</option>
+				</select>
+			</label>
+			<label>
+				<span>Destino</span>
+				<select name="to_unit" data-storage-select>
+					<option value="">—</option>
+				</select>
+			</label>
+		</div>
+		<label>
+			<span>Observações</span>
+			<textarea name="note" rows="3" placeholder="Detalhe a movimentação"></textarea>
+		</label>
+		<button type="submit">Registrar movimentação</button>
+	</form>
+	<ul id="movement-list" class="movement-list">
+		<li class="empty">Sem movimentações registradas.</li>
+	</ul>
+</article>
