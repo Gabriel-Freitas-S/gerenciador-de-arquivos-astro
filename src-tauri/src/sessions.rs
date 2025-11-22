@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use chrono::Utc;
-use parking_lot::RwLock;
+use std::sync::RwLock;
 use uuid::Uuid;
 
 use crate::types::UserProfile;
@@ -26,19 +26,24 @@ impl SessionStore {
             profile,
             issued_at: Utc::now().timestamp_millis(),
         };
-        self.sessions.write().insert(token.clone(), session.clone());
+        // Unwrap is safe here as we are not handling lock poisoning in this simple app
+        self.sessions
+            .write()
+            .unwrap()
+            .insert(token.clone(), session.clone());
         session
     }
 
     pub fn get(&self, token: &str) -> Option<ActiveSession> {
-        self.sessions.read().get(token).cloned()
+        self.sessions.read().unwrap().get(token).cloned()
     }
 
     pub fn require(&self, token: &str) -> Result<ActiveSession, &'static str> {
-        self.get(token).ok_or("Sessão inválida. Faça login novamente.")
+        self.get(token)
+            .ok_or("Sessão inválida. Faça login novamente.")
     }
 
     pub fn revoke(&self, token: &str) {
-        self.sessions.write().remove(token);
+        self.sessions.write().unwrap().remove(token);
     }
 }

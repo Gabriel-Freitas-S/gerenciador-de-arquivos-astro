@@ -129,23 +129,28 @@ async function handleLogin() {
 		return;
 	}
 	setAuthError('');
-	const response = await archiveApi.login({ login, password });
-	if (!response.success || !response.data) {
-		setAuthError(response.error ?? 'Falha ao autenticar.');
-		return;
+	try {
+		const response = await archiveApi.login({ login, password });
+		if (!response.success || !response.data) {
+			setAuthError(response.error ?? 'Falha ao autenticar.');
+			return;
+		}
+		state.token = response.data.token;
+		state.snapshot = response.data.snapshot;
+		state.profile = response.data.profile;
+		if (state.token) {
+			localStorage.setItem(STORAGE_KEY, state.token);
+		}
+		updateAuthUI(response.data.profile);
+		await Promise.all([refreshStorage(), refreshMovements()]);
+		renderSummary();
+		setGuardState(false);
+		setSectionVisibility(true);
+		showToast('Sessão iniciada');
+	} catch (error) {
+		console.error('Login error:', error);
+		setAuthError('Erro de conexão com o servidor. Verifique se o aplicativo está rodando corretamente.');
 	}
-	state.token = response.data.token;
-	state.snapshot = response.data.snapshot;
-	state.profile = response.data.profile;
-	if (state.token) {
-		localStorage.setItem(STORAGE_KEY, state.token);
-	}
-	updateAuthUI(response.data.profile);
-	await Promise.all([refreshStorage(), refreshMovements()]);
-	renderSummary();
-	setGuardState(false);
-	setSectionVisibility(true);
-	showToast('Sessão iniciada');
 }
 
 async function refreshStorage() {
