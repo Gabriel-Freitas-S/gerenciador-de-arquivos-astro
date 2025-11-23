@@ -1,10 +1,10 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AuthGate from '../components/app/AuthGate.astro';
-import AppHeader from '../components/app/AppHeader.astro';
-import SummaryPanel from '../components/app/SummaryPanel.astro';
-import StoragePanel from '../components/app/StoragePanel.astro';
-import MovementPanel from '../components/app/MovementPanel.astro';
+import Layout from "../layouts/Layout.astro";
+import AuthGate from "../components/app/AuthGate.astro";
+import AppHeader from "../components/app/AppHeader.astro";
+import SummaryPanel from "../components/app/SummaryPanel.astro";
+import StoragePanel from "../components/app/StoragePanel.astro";
+import MovementPanel from "../components/app/MovementPanel.astro";
 ---
 
 <Layout>
@@ -21,7 +21,10 @@ import MovementPanel from '../components/app/MovementPanel.astro';
 			<section data-guarded class="space-y-6">
 				<SummaryPanel />
 			</section>
-			<section data-guarded class="grid gap-6 lg:grid-cols-2 xl:[grid-template-columns:1.15fr_0.85fr]">
+			<section
+				data-guarded
+				class="grid gap-6 lg:grid-cols-2 xl:grid-cols-[1.15fr_0.85fr]"
+			>
 				<StoragePanel />
 				<MovementPanel />
 			</section>
@@ -29,4 +32,3 @@ import MovementPanel from '../components/app/MovementPanel.astro';
 	</main>
 	<div id="app-toast" role="status" aria-live="polite"></div>
 </Layout>
-
