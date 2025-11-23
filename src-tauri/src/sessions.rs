@@ -10,7 +10,8 @@ use crate::types::UserProfile;
 pub struct ActiveSession {
     pub token: String,
     pub profile: UserProfile,
-    pub issued_at: i64,
+    #[allow(dead_code)]
+    pub(crate) issued_at: i64,
 }
 
 #[derive(Default)]
