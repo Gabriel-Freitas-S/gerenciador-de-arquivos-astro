@@ -4,24 +4,26 @@ version = "0.1.0"
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "2.5.2", features = [] }
+tauri-build = { version = "2.5.3", features = [] }
 
 [dependencies]
 anyhow = "1.0.100"
 bcrypt = "0.17.1"
 chrono = { version = "0.4.42", features = ["serde"] }
 dotenvy = "0.15.7"
+# SQLx with SQLite support
 sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio"] }
+html-escape = "0.2.13"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 thiserror = "2.0.17"
-uuid = { version = "1.18.1", features = ["v4"] }
+uuid = { version = "1.19.0", features = ["v4"] }
 validator = { version = "0.20.0", features = ["derive"] }
 
 [dependencies.tauri]
-version = "2.9.3"
+version = "2.9.5"
 features = ["wry", "config-json5"]
 
 [dependencies.tauri-plugin-sql]
-version = "2.2.0"
+version = "2.3.1"
 features = ["sqlite"]

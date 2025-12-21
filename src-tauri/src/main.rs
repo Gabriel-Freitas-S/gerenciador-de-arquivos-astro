@@ -8,6 +8,7 @@ mod types;
 use std::fs;
 
 use anyhow::Context;
+use commands::auth::LoginRateLimiter;
 use db::ArchiveDatabase;
 use sessions::SessionStore;
 use tauri::Manager;
@@ -43,6 +44,7 @@ fn main() -> anyhow::Result<()> {
 
             app.manage(db);
             app.manage(SessionStore::default());
+            app.manage(LoginRateLimiter::default());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

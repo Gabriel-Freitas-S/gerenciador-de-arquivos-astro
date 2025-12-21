@@ -4,13 +4,17 @@ use anyhow::Result;
 use bcrypt::{hash, verify, DEFAULT_COST};
 use chrono::Utc;
 use serde_json::Value;
-use sqlx::{sqlite::SqlitePoolOptions, Row, SqlitePool};
+use sqlx::{
+    sqlite::{SqliteConnectOptions, SqlitePoolOptions},
+    Row, SqlitePool,
+};
+use std::str::FromStr;
 
 use crate::types::{
     MovementData, MovementRecord, SnapshotSummary, StoragePayload, StorageUnitRecord, UserProfile,
 };
 
-const MIGRATIONS: [&str; 3] = [
+const MIGRATIONS: [&str; 6] = [
     "CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -41,6 +45,9 @@ const MIGRATIONS: [&str; 3] = [
         actor TEXT NOT NULL,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )",
+    "CREATE INDEX IF NOT EXISTS idx_storage_updated_at ON storage_units(updated_at)",
+    "CREATE INDEX IF NOT EXISTS idx_movements_created_at ON movements(created_at)",
+    "CREATE INDEX IF NOT EXISTS idx_users_login ON users(login)",
 ];
 
 pub struct ArchiveDatabase {
@@ -54,10 +61,16 @@ impl ArchiveDatabase {
             std::fs::File::create(&path)?;
         }
 
-        let db_url = format!("sqlite://{}", path.to_string_lossy());
+        let options =
+            SqliteConnectOptions::from_str(&format!("sqlite://{}", path.to_string_lossy()))?
+                .create_if_missing(true);
+
         let pool = SqlitePoolOptions::new()
-            .max_connections(5)
-            .connect(&db_url)
+            .max_connections(10)
+            .min_connections(2)
+            .acquire_timeout(std::time::Duration::from_secs(5))
+            .idle_timeout(std::time::Duration::from_secs(60))
+            .connect_with(options)
             .await?;
 
         let db = Self { pool };

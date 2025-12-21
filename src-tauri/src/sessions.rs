@@ -40,8 +40,21 @@ impl SessionStore {
     }
 
     pub fn require(&self, token: &str) -> Result<ActiveSession, &'static str> {
-        self.get(token)
-            .ok_or("Sessão inválida. Faça login novamente.")
+        match self.get(token) {
+            Some(session) => {
+                // 24 hours expiration
+                const SESSION_DURATION_MS: i64 = 24 * 60 * 60 * 1000;
+                let now = Utc::now().timestamp_millis();
+                
+                if now - session.issued_at > SESSION_DURATION_MS {
+                    self.revoke(token);
+                    Err("Sessão expirada. Faça login novamente.")
+                } else {
+                    Ok(session)
+                }
+            }
+            None => Err("Sessão inválida. Faça login novamente."),
+        }
     }
 
     pub fn revoke(&self, token: &str) {

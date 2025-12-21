@@ -43,20 +43,37 @@ export async function handleMovement(state: AppState) {
 function renderMovements(state: AppState) {
     if (!dom.movementList) return;
     dom.movementList.innerHTML = '';
+
     if (state.movements.length === 0) {
         dom.movementList.innerHTML =
             '<li class="rounded-2xl border border-white/10 bg-white/5 p-4 text-center text-sm text-white/70">Registre a primeira movimentação do dia.</li>';
         return;
     }
-    for (const movement of state.movements) {
+
+    const MAX_RENDER = 25;
+    const items = state.movements.slice(0, MAX_RENDER);
+
+    for (const movement of items) {
         const item = document.createElement('li');
         item.className =
             'rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80 shadow-inner shadow-white/5';
-        item.innerHTML = `
-            <strong class="text-base font-semibold text-white">${movement.action}</strong>
-            <span class="mt-1 block text-xs text-white/60">${movement.reference ?? 'Sem ref.'} · ${new Date(movement.created_at).toLocaleString('pt-BR')}</span>
-            <p class="mt-2 text-sm text-white/80">${movement.note ?? 'Sem observações.'}</p>
-        `;
+
+        const actionStrong = document.createElement('strong');
+        actionStrong.className = 'text-base font-semibold text-white';
+        actionStrong.textContent = movement.action;
+
+        const infoSpan = document.createElement('span');
+        infoSpan.className = 'mt-1 block text-xs text-white/60';
+        infoSpan.textContent = `${movement.reference ?? 'Sem ref.'} · ${new Date(movement.created_at).toLocaleString('pt-BR')}`;
+
+        const noteP = document.createElement('p');
+        noteP.className = 'mt-2 text-sm text-white/80';
+        noteP.textContent = movement.note ?? 'Sem observações.';
+
+        item.appendChild(actionStrong);
+        item.appendChild(infoSpan);
+        item.appendChild(noteP);
+
         dom.movementList.appendChild(item);
     }
 }

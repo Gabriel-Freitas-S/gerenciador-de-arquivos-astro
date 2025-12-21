@@ -50,21 +50,33 @@ export async function handleStorageCreation(state: AppState) {
 function renderStorage(state: AppState) {
     if (!dom.storageTable) return;
     dom.storageTable.innerHTML = '';
+
     if (state.storage.length === 0) {
         dom.storageTable.innerHTML =
             '<tr><td class="px-4 py-3 text-center text-white/60" colspan="5">Nenhuma unidade cadastrada ainda.</td></tr>';
         return;
     }
-    for (const unit of state.storage) {
+
+    const MAX_RENDER = 50;
+    const items = state.storage.slice(0, MAX_RENDER);
+
+    for (const unit of items) {
         const row = document.createElement('tr');
         row.className = 'border-t border-white/5';
-        row.innerHTML = `
-            <td class="px-4 py-3">${unit.label}</td>
-            <td class="px-4 py-3">${typeLabels[unit.type]}</td>
-            <td class="px-4 py-3">${unit.section ?? '—'}</td>
-            <td class="px-4 py-3">${unit.occupancy}/${unit.capacity}</td>
-            <td class="px-4 py-3">${new Date(unit.updated_at).toLocaleString('pt-BR')}</td>
-        `;
+
+        const createCell = (text: string) => {
+            const td = document.createElement('td');
+            td.className = 'px-4 py-3';
+            td.textContent = text;
+            return td;
+        };
+
+        row.appendChild(createCell(unit.label));
+        row.appendChild(createCell(typeLabels[unit.type]));
+        row.appendChild(createCell(unit.section ?? '—'));
+        row.appendChild(createCell(`${unit.occupancy}/${unit.capacity}`));
+        row.appendChild(createCell(new Date(unit.updated_at).toLocaleString('pt-BR')));
+
         dom.storageTable.appendChild(row);
     }
 }

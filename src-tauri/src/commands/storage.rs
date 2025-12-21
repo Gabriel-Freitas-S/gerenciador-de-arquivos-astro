@@ -4,6 +4,7 @@ use crate::types::{
     ApiResponse, MovementData, SnapshotSummary, StorageCreatePayload, StorageUnitRecord,
     TokenPayload,
 };
+use html_escape::encode_text;
 use tauri::State;
 use validator::Validate;
 
@@ -48,7 +49,20 @@ pub async fn storage_create(
         Ok(session) => session,
         Err(message) => return Ok(ApiResponse::error(message)),
     };
-    match db.create_storage_unit(&payload.data).await {
+    match db
+        .create_storage_unit(&crate::types::StoragePayload {
+            label: encode_text(&payload.data.label).into_owned(),
+            r#type: payload.data.r#type.clone(),
+            section: payload
+                .data
+                .section
+                .as_ref()
+                .map(|s| encode_text(s).into_owned()),
+            capacity: payload.data.capacity,
+            metadata: payload.data.metadata.clone(),
+        })
+        .await
+    {
         Ok(unit) => {
             let movement = MovementData {
                 action: "Cadastro de unidade".into(),

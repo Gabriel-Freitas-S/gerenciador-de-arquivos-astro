@@ -11,6 +11,9 @@
   },
   "app": {
     "withGlobalTauri": false,
+    "security": {
+      "dangerousDisableAssetCspModification": false
+    },
     "windows": [
       {
         "center": true,
