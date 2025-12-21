@@ -1,0 +1,406 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+---
+
+<AppLayout title="Gaveteiros - Arquivo Inteligente" currentPath="/cabinets">
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">🗄️ Mapa de Gaveteiros</h1>
+            <p class="page-subtitle">Visualize a ocupação e gerencie posições</p>
+        </div>
+        <button type="button" class="btn-primary" id="btn-new-cabinet">
+            + Novo Gaveteiro
+        </button>
+    </div>
+
+    <div class="occupation-summary" id="occupation-summary">
+        <div class="summary-card">
+            <span class="summary-icon">📊</span>
+            <div class="summary-content">
+                <span class="summary-value" id="total-positions">-</span>
+                <span class="summary-label">Posições Totais</span>
+            </div>
+        </div>
+        <div class="summary-card">
+            <span class="summary-icon">📁</span>
+            <div class="summary-content">
+                <span class="summary-value" id="occupied-positions">-</span>
+                <span class="summary-label">Ocupadas</span>
+            </div>
+        </div>
+        <div class="summary-card warning">
+            <span class="summary-icon">⚠️</span>
+            <div class="summary-content">
+                <span class="summary-value" id="warnings-count">-</span>
+                <span class="summary-label">Alertas</span>
+            </div>
+        </div>
+        <div class="summary-card critical">
+            <span class="summary-icon">🔴</span>
+            <div class="summary-content">
+                <span class="summary-value" id="critical-count">-</span>
+                <span class="summary-label">Críticos</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="cabinets-grid" id="cabinets-grid">
+        <div class="loading-message">Carregando mapa de ocupação...</div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <span class="legend-dot ok"></span>
+            <span>🟢 &lt; 70% ocupado</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot warning"></span>
+            <span>🟡 70-90% ocupado</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot critical"></span>
+            <span>🔴 &gt; 90% ocupado</span>
+        </div>
+    </div>
+</AppLayout>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.25rem 0 0;
+        font-size: 0.9375rem;
+    }
+
+    .btn-primary {
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, #8b5cf6, #6366f1);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
+    }
+
+    .occupation-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .summary-card.warning {
+        border-color: rgba(245, 158, 11, 0.3);
+        background: rgba(245, 158, 11, 0.05);
+    }
+
+    .summary-card.critical {
+        border-color: rgba(239, 68, 68, 0.3);
+        background: rgba(239, 68, 68, 0.05);
+    }
+
+    .summary-icon {
+        font-size: 1.5rem;
+    }
+
+    .summary-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .summary-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .summary-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .cabinets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .loading-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .cabinet-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 1.25rem;
+    }
+
+    .cabinet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .cabinet-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .cabinet-location {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .cabinet-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .cabinet-status.ok {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+    }
+
+    .cabinet-status.warning {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+    }
+
+    .cabinet-status.critical {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .drawer-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+    }
+
+    .drawer-label {
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.7);
+        min-width: 60px;
+    }
+
+    .drawer-bar {
+        flex: 1;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .drawer-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.3s ease;
+    }
+
+    .drawer-fill.ok {
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+    }
+
+    .drawer-fill.warning {
+        background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    }
+
+    .drawer-fill.critical {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+
+    .drawer-info {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        min-width: 50px;
+        text-align: right;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .legend-dot.ok {
+        background: #22c55e;
+    }
+
+    .legend-dot.warning {
+        background: #fbbf24;
+    }
+
+    .legend-dot.critical {
+        background: #ef4444;
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    interface DrawerWithOccupancy {
+        drawer: {
+            id: number;
+            number: number;
+            capacity: number;
+        };
+        occupied: number;
+        capacity: number;
+        occupancy_rate: number;
+        critical: boolean;
+    }
+
+    interface CabinetOccupationNode {
+        cabinet_id: number;
+        cabinet_label: string;
+        occupancy_rate: number;
+        status: string;
+        drawers: DrawerWithOccupancy[];
+    }
+
+    interface OccupationMap {
+        cabinets: CabinetOccupationNode[];
+        totals: {
+            total_positions: number;
+            occupied_positions: number;
+            warnings: number;
+            critical: number;
+        };
+    }
+
+    async function loadOccupationMap() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) {
+            window.location.href = '/';
+            return;
+        }
+
+        try {
+            const result = await invoke('get_occupation_map', {
+                payload: { token },
+            }) as { success: boolean; data?: OccupationMap; error?: string };
+
+            if (result.success && result.data) {
+                renderOccupationMap(result.data);
+            } else {
+                console.error('Error:', result.error);
+            }
+        } catch (err) {
+            console.error('Failed to load occupation map:', err);
+        }
+    }
+
+    function renderOccupationMap(data: OccupationMap) {
+        // Update summary
+        document.getElementById('total-positions')!.textContent = data.totals.total_positions.toString();
+        document.getElementById('occupied-positions')!.textContent = data.totals.occupied_positions.toString();
+        document.getElementById('warnings-count')!.textContent = data.totals.warnings.toString();
+        document.getElementById('critical-count')!.textContent = data.totals.critical.toString();
+
+        // Render cabinets
+        const grid = document.getElementById('cabinets-grid');
+        if (!grid) return;
+
+        if (data.cabinets.length === 0) {
+            grid.innerHTML = '<div class="loading-message">Nenhum gaveteiro cadastrado</div>';
+            return;
+        }
+
+        grid.innerHTML = data.cabinets.map(cab => {
+            const statusClass = cab.status.toLowerCase();
+            const statusText = cab.status === 'OK' ? 'Normal' : (cab.status === 'WARNING' ? 'Atenção' : 'Crítico');
+
+            return `
+                <div class="cabinet-card">
+                    <div class="cabinet-header">
+                        <div>
+                            <div class="cabinet-title">🗄️ Gaveteiro ${cab.cabinet_label}</div>
+                            <div class="cabinet-location">${cab.occupancy_rate.toFixed(0)}% ocupado</div>
+                        </div>
+                        <span class="cabinet-status ${statusClass}">${statusText}</span>
+                    </div>
+                    ${cab.drawers.map(d => {
+                        const fillClass = d.occupancy_rate >= 90 ? 'critical' : (d.occupancy_rate >= 70 ? 'warning' : 'ok');
+                        return `
+                            <div class="drawer-row">
+                                <span class="drawer-label">Gaveta ${d.drawer.number}</span>
+                                <div class="drawer-bar">
+                                    <div class="drawer-fill ${fillClass}" style="width: ${d.occupancy_rate}%"></div>
+                                </div>
+                                <span class="drawer-info">${d.occupied}/${d.capacity}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadOccupationMap);
+</script>

@@ -1,0 +1,447 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+---
+
+<AppLayout title="Empréstimos - Arquivo Inteligente" currentPath="/loans">
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">📁 Controle de Empréstimos</h1>
+            <p class="page-subtitle">Gerencie empréstimos e devoluções de pastas</p>
+        </div>
+        <button type="button" class="btn-primary" id="btn-new-loan">
+            + Novo Empréstimo
+        </button>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <span class="stat-icon">📊</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-total">-</span>
+                <span class="stat-label">Total</span>
+            </div>
+        </div>
+        <div class="stat-card warning">
+            <span class="stat-icon">⏳</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-pending">-</span>
+                <span class="stat-label">Em Aberto</span>
+            </div>
+        </div>
+        <div class="stat-card danger">
+            <span class="stat-icon">🔴</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-overdue">-</span>
+                <span class="stat-label">Atrasados</span>
+            </div>
+        </div>
+        <div class="stat-card success">
+            <span class="stat-icon">✅</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-returned-today">-</span>
+                <span class="stat-label">Devolvidos Hoje</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button type="button" class="tab active" data-tab="pending">Em Aberto</button>
+        <button type="button" class="tab" data-tab="overdue">Atrasados</button>
+        <button type="button" class="tab" data-tab="all">Todos</button>
+    </div>
+
+    <div class="table-container">
+        <table class="data-table" id="loans-table">
+            <thead>
+                <tr>
+                    <th>Funcionário</th>
+                    <th>Matrícula</th>
+                    <th>Solicitante</th>
+                    <th>Motivo</th>
+                    <th>Data Empréstimo</th>
+                    <th>Previsão</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="loans-tbody">
+                <tr class="loading-row">
+                    <td colspan="8">Carregando empréstimos...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</AppLayout>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.25rem 0 0;
+        font-size: 0.9375rem;
+    }
+
+    .btn-primary {
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, #f59e0b, #ea580c);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-card.warning {
+        border-color: rgba(245, 158, 11, 0.3);
+        background: rgba(245, 158, 11, 0.05);
+    }
+
+    .stat-card.danger {
+        border-color: rgba(239, 68, 68, 0.3);
+        background: rgba(239, 68, 68, 0.05);
+    }
+
+    .stat-card.success {
+        border-color: rgba(34, 197, 94, 0.3);
+        background: rgba(34, 197, 94, 0.05);
+    }
+
+    .stat-icon {
+        font-size: 1.75rem;
+    }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .stat-label {
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .tab {
+        padding: 0.625rem 1.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .tab.active {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(234, 88, 12, 0.15));
+        border-color: rgba(245, 158, 11, 0.3);
+        color: #fbbf24;
+    }
+
+    .table-container {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .data-table td {
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
+        color: rgba(255, 255, 255, 0.85);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .data-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .loading-row td {
+        text-align: center;
+        padding: 2rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .status-badge.borrowed {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+    }
+
+    .status-badge.overdue {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .status-badge.returned {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+    }
+
+    .action-btn {
+        padding: 0.375rem 0.75rem;
+        background: rgba(34, 197, 94, 0.15);
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        border-radius: 6px;
+        color: #22c55e;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+        background: rgba(34, 197, 94, 0.25);
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    interface Loan {
+        id: number;
+        employee_id: number;
+        requester_name: string;
+        reason: string;
+        loan_date: string;
+        expected_return_date: string;
+        actual_return_date: string | null;
+        status: string;
+    }
+
+    interface LoanWithEmployee {
+        loan: Loan;
+        employee: {
+            full_name: string;
+            registration: string;
+        };
+    }
+
+    let activeTab = 'pending';
+
+    async function loadLoansReport() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) {
+            window.location.href = '/';
+            return;
+        }
+
+        try {
+            const result = await invoke('get_loans_report', {
+                payload: { token },
+            }) as { success: boolean; data?: any };
+
+            if (result.success && result.data) {
+                document.getElementById('stat-total')!.textContent = result.data.total_loans;
+                document.getElementById('stat-pending')!.textContent = result.data.open_loans;
+                document.getElementById('stat-overdue')!.textContent = result.data.overdue_loans?.length || 0;
+                document.getElementById('stat-returned-today')!.textContent = result.data.returned_today;
+            }
+        } catch (err) {
+            console.error('Failed to load report:', err);
+        }
+    }
+
+    async function loadLoans() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            let result;
+            if (activeTab === 'overdue') {
+                result = await invoke('get_overdue_loans', { payload: { token } }) as { success: boolean; data?: LoanWithEmployee[] };
+                if (result.success && result.data) {
+                    renderLoansWithEmployee(result.data);
+                }
+            } else {
+                result = await invoke(activeTab === 'pending' ? 'get_pending_loans' : 'list_loans', {
+                    payload: { token },
+                }) as { success: boolean; data?: Loan[] };
+                if (result.success && result.data) {
+                    renderLoans(result.data);
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load loans:', err);
+        }
+    }
+
+    function renderLoans(loans: Loan[]) {
+        const tbody = document.getElementById('loans-tbody');
+        if (!tbody) return;
+
+        if (loans.length === 0) {
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Nenhum empréstimo encontrado</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = loans.map(loan => {
+            const isOverdue = loan.status === 'BORROWED' && new Date(loan.expected_return_date) < new Date();
+            const statusClass = loan.status === 'RETURNED' ? 'returned' : (isOverdue ? 'overdue' : 'borrowed');
+            const statusText = loan.status === 'RETURNED' ? 'Devolvido' : (isOverdue ? 'Atrasado' : 'Emprestado');
+
+            return `
+                <tr data-id="${loan.id}">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>${loan.requester_name}</td>
+                    <td>${loan.reason}</td>
+                    <td>${new Date(loan.loan_date).toLocaleDateString('pt-BR')}</td>
+                    <td>${new Date(loan.expected_return_date).toLocaleDateString('pt-BR')}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        ${loan.status === 'BORROWED' ? `<button class="action-btn" onclick="returnLoan(${loan.id})">✅ Devolver</button>` : '-'}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderLoansWithEmployee(loans: LoanWithEmployee[]) {
+        const tbody = document.getElementById('loans-tbody');
+        if (!tbody) return;
+
+        if (loans.length === 0) {
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Nenhum empréstimo atrasado</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = loans.map(({ loan, employee }) => `
+            <tr data-id="${loan.id}">
+                <td><strong>${employee.full_name}</strong></td>
+                <td>${employee.registration}</td>
+                <td>${loan.requester_name}</td>
+                <td>${loan.reason}</td>
+                <td>${new Date(loan.loan_date).toLocaleDateString('pt-BR')}</td>
+                <td>${new Date(loan.expected_return_date).toLocaleDateString('pt-BR')}</td>
+                <td><span class="status-badge overdue">Atrasado</span></td>
+                <td>
+                    <button class="action-btn" onclick="returnLoan(${loan.id})">✅ Devolver</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            (e.target as HTMLElement).classList.add('active');
+            activeTab = (e.target as HTMLElement).dataset.tab || 'pending';
+            loadLoans();
+        });
+    });
+
+    // Return loan
+    (window as any).returnLoan = async (loanId: number) => {
+        const token = localStorage.getItem('archive_token');
+        if (!token) return;
+
+        if (!confirm('Confirmar devolução deste empréstimo?')) return;
+
+        try {
+            const result = await invoke('return_loan', {
+                payload: { token, loan_id: loanId },
+            }) as { success: boolean; error?: string };
+
+            if (result.success) {
+                loadLoansReport();
+                loadLoans();
+            } else {
+                alert('Erro: ' + result.error);
+            }
+        } catch (err) {
+            console.error('Failed to return loan:', err);
+        }
+    };
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+        loadLoansReport();
+        loadLoans();
+    });
+</script>

@@ -1,0 +1,183 @@
+---
+interface Props {
+    currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+
+const menuItems = [
+    { path: '/', label: 'Dashboard', icon: '📊' },
+    { path: '/employees', label: 'Funcionários', icon: '👥' },
+    { path: '/cabinets', label: 'Gaveteiros', icon: '🗄️' },
+    { path: '/loans', label: 'Empréstimos', icon: '📁' },
+    { path: '/archive', label: 'Arquivo Morto', icon: '📦' },
+    { path: '/reports', label: 'Relatórios', icon: '📈' },
+    { path: '/settings', label: 'Configurações', icon: '⚙️' },
+];
+---
+
+<aside class="sidebar" data-sidebar>
+    <div class="sidebar-header">
+        <span class="sidebar-logo">📂</span>
+        <span class="sidebar-title">Arquivo Inteligente</span>
+    </div>
+    
+    <nav class="sidebar-nav">
+        {menuItems.map((item) => (
+            <a
+                href={item.path}
+                class:list={['sidebar-link', { active: currentPath === item.path }]}
+            >
+                <span class="sidebar-icon">{item.icon}</span>
+                <span class="sidebar-label">{item.label}</span>
+            </a>
+        ))}
+    </nav>
+    
+    <div class="sidebar-footer">
+        <div class="sidebar-user" id="sidebar-user">
+            <span class="sidebar-user-avatar">👤</span>
+            <span class="sidebar-user-name" data-user-name>Carregando...</span>
+        </div>
+        <button type="button" class="sidebar-logout" id="sidebar-logout">
+            🚪 Sair
+        </button>
+    </div>
+</aside>
+
+<style>
+    .sidebar {
+        width: 260px;
+        min-height: 100vh;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(5, 6, 10, 0.99) 100%);
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sidebar-logo {
+        font-size: 1.75rem;
+    }
+
+    .sidebar-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .sidebar-nav {
+        flex: 1;
+        padding: 1rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(96, 165, 250, 0.1);
+        color: #60a5fa;
+    }
+
+    .sidebar-link.active {
+        background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(167, 139, 250, 0.15));
+        color: #fff;
+        box-shadow: 0 2px 12px rgba(96, 165, 250, 0.15);
+    }
+
+    .sidebar-icon {
+        font-size: 1.125rem;
+        width: 1.5rem;
+        text-align: center;
+    }
+
+    .sidebar-footer {
+        padding: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .sidebar-user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+    }
+
+    .sidebar-user-avatar {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .sidebar-user-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .sidebar-logout {
+        width: 100%;
+        padding: 0.625rem;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        color: #f87171;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-logout:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+    }
+</style>

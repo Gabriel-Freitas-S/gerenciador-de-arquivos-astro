@@ -1,0 +1,159 @@
+---
+// Dashboard Cards Component - Shows quick stats
+---
+
+<div class="dashboard-cards" id="dashboard-cards">
+    <div class="card" id="card-employees">
+        <div class="card-icon">👥</div>
+        <div class="card-content">
+            <span class="card-value" data-stat="active-employees">-</span>
+            <span class="card-label">Funcionários Ativos</span>
+        </div>
+        <a href="/employees" class="card-link">Ver todos →</a>
+    </div>
+
+    <div class="card" id="card-loans">
+        <div class="card-icon">📁</div>
+        <div class="card-content">
+            <span class="card-value" data-stat="open-loans">-</span>
+            <span class="card-label">Empréstimos em Aberto</span>
+        </div>
+        <a href="/loans" class="card-link">Ver todos →</a>
+    </div>
+
+    <div class="card warning" id="card-overdue">
+        <div class="card-icon">⚠️</div>
+        <div class="card-content">
+            <span class="card-value" data-stat="overdue-loans">-</span>
+            <span class="card-label">Atrasados</span>
+        </div>
+        <a href="/loans" class="card-link">Ver agora →</a>
+    </div>
+
+    <div class="card" id="card-cabinets">
+        <div class="card-icon">🗄️</div>
+        <div class="card-content">
+            <span class="card-value" data-stat="critical-cabinets">-</span>
+            <span class="card-label">Gaveteiros Críticos</span>
+        </div>
+        <a href="/cabinets" class="card-link">Ver mapa →</a>
+    </div>
+</div>
+
+<style>
+    .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card.warning {
+        border-color: rgba(245, 158, 11, 0.3);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.03) 100%);
+    }
+
+    .card.warning:hover {
+        border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .card-icon {
+        font-size: 1.75rem;
+    }
+
+    .card-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1.2;
+    }
+
+    .card-label {
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 0.25rem;
+    }
+
+    .card-link {
+        font-size: 0.8125rem;
+        color: #60a5fa;
+        text-decoration: none;
+        margin-top: auto;
+        transition: color 0.2s ease;
+    }
+
+    .card-link:hover {
+        color: #93c5fd;
+    }
+
+    .card.warning .card-link {
+        color: #fbbf24;
+    }
+
+    .card.warning .card-link:hover {
+        color: #fcd34d;
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    async function loadDashboardStats() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('get_dashboard_stats', {
+                payload: { token },
+            }) as { success: boolean; data?: any };
+
+            if (result.success && result.data) {
+                document.querySelector('[data-stat="active-employees"]')!.textContent = result.data.active_employees;
+                document.querySelector('[data-stat="open-loans"]')!.textContent = result.data.open_loans;
+                document.querySelector('[data-stat="overdue-loans"]')!.textContent = result.data.overdue_loans;
+                document.querySelector('[data-stat="critical-cabinets"]')!.textContent = result.data.critical_cabinets?.length || 0;
+
+                // Add warning class if overdue > 0
+                if (result.data.overdue_loans > 0) {
+                    document.getElementById('card-overdue')?.classList.add('warning');
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load dashboard stats:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check auth first
+        const token = localStorage.getItem('archive_token');
+        if (token) {
+            loadDashboardStats();
+        }
+    });
+
+    // Reload when auth changes
+    document.addEventListener('authStateChange', () => {
+        loadDashboardStats();
+    });
+</script>

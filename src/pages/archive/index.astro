@@ -1,0 +1,408 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+---
+
+<AppLayout title="Arquivo Morto - Arquivo Inteligente" currentPath="/archive">
+    <div class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">📦 Arquivo Morto</h1>
+            <p class="page-subtitle">Gerencie caixas de funcionários demitidos</p>
+        </div>
+        <button type="button" class="btn-primary" id="btn-new-box">
+            + Nova Caixa
+        </button>
+    </div>
+
+    <div class="tabs">
+        <button type="button" class="tab active" data-tab="boxes">Caixas</button>
+        <button type="button" class="tab" data-tab="disposal">Candidatos ao Descarte</button>
+    </div>
+
+    <div class="tab-content" id="tab-boxes">
+        <div class="boxes-grid" id="boxes-grid">
+            <div class="loading-message">Carregando caixas...</div>
+        </div>
+    </div>
+
+    <div class="tab-content hidden" id="tab-disposal">
+        <div class="alert-info">
+            <span class="alert-icon">ℹ️</span>
+            <span>Documentos com mais de 5 anos após demissão podem ser descartados conforme legislação.</span>
+        </div>
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Funcionário</th>
+                        <th>Matrícula</th>
+                        <th>Data Demissão</th>
+                        <th>Elegível Desde</th>
+                        <th>Caixa</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="disposal-tbody">
+                    <tr class="loading-row">
+                        <td colspan="6">Carregando candidatos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</AppLayout>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #78716c, #a8a29e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.25rem 0 0;
+        font-size: 0.9375rem;
+    }
+
+    .btn-primary {
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, #78716c, #57534e);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+    }
+
+    .tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .tab {
+        padding: 0.625rem 1.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tab.active {
+        background: rgba(120, 113, 108, 0.2);
+        border-color: rgba(120, 113, 108, 0.4);
+        color: #d6d3d1;
+    }
+
+    .tab-content.hidden {
+        display: none;
+    }
+
+    .boxes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .loading-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .box-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1.25rem;
+    }
+
+    .box-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .box-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .box-year {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 0.25rem;
+    }
+
+    .box-count {
+        padding: 0.25rem 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .box-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .alert-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        color: #93c5fd;
+        font-size: 0.875rem;
+    }
+
+    .alert-icon {
+        font-size: 1.25rem;
+    }
+
+    .table-container {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .data-table td {
+        padding: 0.875rem 1rem;
+        font-size: 0.9375rem;
+        color: rgba(255, 255, 255, 0.85);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .loading-row td {
+        text-align: center;
+        padding: 2rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .action-btn {
+        padding: 0.375rem 0.75rem;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 6px;
+        color: #ef4444;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+        background: rgba(239, 68, 68, 0.25);
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    interface ArchiveBox {
+        id: number;
+        box_number: string;
+        year: number;
+        period: string | null;
+        letter_range: string | null;
+        location: string | null;
+        capacity: number;
+        current_count: number;
+    }
+
+    interface DisposalCandidate {
+        archive_item: {
+            id: number;
+            disposal_eligible_date: string;
+            box_id: number;
+        };
+        employee: {
+            full_name: string;
+            registration: string;
+            termination_date: string;
+        };
+    }
+
+    async function loadBoxes() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) {
+            window.location.href = '/';
+            return;
+        }
+
+        try {
+            const result = await invoke('list_archive_boxes', {
+                payload: { token },
+            }) as { success: boolean; data?: ArchiveBox[] };
+
+            if (result.success && result.data) {
+                renderBoxes(result.data);
+            }
+        } catch (err) {
+            console.error('Failed to load boxes:', err);
+        }
+    }
+
+    function renderBoxes(boxes: ArchiveBox[]) {
+        const grid = document.getElementById('boxes-grid');
+        if (!grid) return;
+
+        if (boxes.length === 0) {
+            grid.innerHTML = '<div class="loading-message">Nenhuma caixa cadastrada</div>';
+            return;
+        }
+
+        grid.innerHTML = boxes.map(box => `
+            <div class="box-card">
+                <div class="box-header">
+                    <div>
+                        <div class="box-title">📦 ${box.box_number}</div>
+                        <div class="box-year">Ano: ${box.year}</div>
+                    </div>
+                    <span class="box-count">${box.current_count}/${box.capacity}</span>
+                </div>
+                <div class="box-details">
+                    ${box.period ? `<span>📅 ${box.period}</span>` : ''}
+                    ${box.letter_range ? `<span>🔤 Faixa: ${box.letter_range}</span>` : ''}
+                    ${box.location ? `<span>📍 ${box.location}</span>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function loadDisposalCandidates() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('get_disposal_candidates', {
+                payload: { token },
+            }) as { success: boolean; data?: DisposalCandidate[] };
+
+            if (result.success && result.data) {
+                renderDisposalCandidates(result.data);
+            }
+        } catch (err) {
+            console.error('Failed to load disposal candidates:', err);
+        }
+    }
+
+    function renderDisposalCandidates(candidates: DisposalCandidate[]) {
+        const tbody = document.getElementById('disposal-tbody');
+        if (!tbody) return;
+
+        if (candidates.length === 0) {
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="6">Nenhum candidato ao descarte</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = candidates.map(c => `
+            <tr>
+                <td><strong>${c.employee.full_name}</strong></td>
+                <td>${c.employee.registration}</td>
+                <td>${c.employee.termination_date ? new Date(c.employee.termination_date).toLocaleDateString('pt-BR') : '-'}</td>
+                <td>${new Date(c.archive_item.disposal_eligible_date).toLocaleDateString('pt-BR')}</td>
+                <td>Caixa #${c.archive_item.box_id}</td>
+                <td>
+                    <button class="action-btn" onclick="registerDisposal(${c.archive_item.id})">🗑️ Descartar</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            const target = (e.target as HTMLElement).dataset.tab;
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            (e.target as HTMLElement).classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`tab-${target}`)?.classList.remove('hidden');
+            
+            if (target === 'disposal') {
+                loadDisposalCandidates();
+            }
+        });
+    });
+
+    // Register disposal
+    (window as any).registerDisposal = async (itemId: number) => {
+        const token = localStorage.getItem('archive_token');
+        if (!token) return;
+
+        if (!confirm('Confirmar descarte deste documento?')) return;
+
+        try {
+            const result = await invoke('register_disposal', {
+                payload: { token, item_ids: [itemId] },
+            }) as { success: boolean; error?: string };
+
+            if (result.success) {
+                loadDisposalCandidates();
+            } else {
+                alert('Erro: ' + result.error);
+            }
+        } catch (err) {
+            console.error('Failed to register disposal:', err);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', loadBoxes);
+</script>

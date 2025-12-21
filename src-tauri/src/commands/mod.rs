@@ -1,3 +1,11 @@
 pub mod auth;
+pub mod dead_archive;
+pub mod departments;
+pub mod documents;
+pub mod employees;
+pub mod file_cabinets;
+pub mod labels;
+pub mod loans;
 pub mod movements;
+pub mod reports;
 pub mod storage;

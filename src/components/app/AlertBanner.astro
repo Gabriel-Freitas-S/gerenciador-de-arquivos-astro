@@ -1,0 +1,163 @@
+---
+// Alert Banner Component - Shows urgent notifications
+---
+
+<div class="alert-banner-container" id="alert-banner" style="display: none;">
+    <div class="alert-banner warning" id="overdue-alert">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content">
+            <strong>Empréstimos Atrasados!</strong>
+            <span id="overdue-count">0</span> pasta(s) pendente(s) de devolução
+        </div>
+        <a href="/loans" class="alert-action">Resolver →</a>
+    </div>
+    
+    <div class="alert-banner danger" id="capacity-alert" style="display: none;">
+        <span class="alert-icon">🔴</span>
+        <div class="alert-content">
+            <strong>Capacidade Crítica!</strong>
+            <span id="critical-count">0</span> gaveteiro(s) com mais de 90% de ocupação
+        </div>
+        <a href="/cabinets" class="alert-action">Ver mapa →</a>
+    </div>
+</div>
+
+<style>
+    .alert-banner-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .alert-banner {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.875rem 1.25rem;
+        border-radius: 12px;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-banner.warning {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+        border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .alert-banner.danger {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .alert-icon {
+        font-size: 1.5rem;
+    }
+
+    .alert-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+
+    .alert-content strong {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .alert-content span {
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .alert-banner.warning .alert-content strong {
+        color: #fbbf24;
+    }
+
+    .alert-banner.danger .alert-content strong {
+        color: #f87171;
+    }
+
+    .alert-action {
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        transition: background 0.2s ease;
+    }
+
+    .alert-action:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    async function checkAlerts() {
+        const token = localStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('get_dashboard_stats', {
+                payload: { token },
+            }) as { success: boolean; data?: any };
+
+            if (result.success && result.data) {
+                const container = document.getElementById('alert-banner');
+                const overdueAlert = document.getElementById('overdue-alert');
+                const capacityAlert = document.getElementById('capacity-alert');
+                
+                let showBanner = false;
+
+                // Overdue loans
+                if (result.data.overdue_loans > 0) {
+                    document.getElementById('overdue-count')!.textContent = result.data.overdue_loans.toString();
+                    overdueAlert!.style.display = 'flex';
+                    showBanner = true;
+                } else {
+                    overdueAlert!.style.display = 'none';
+                }
+
+                // Critical cabinets
+                const criticalCount = result.data.critical_cabinets?.length || 0;
+                if (criticalCount > 0) {
+                    document.getElementById('critical-count')!.textContent = criticalCount.toString();
+                    capacityAlert!.style.display = 'flex';
+                    showBanner = true;
+                } else {
+                    capacityAlert!.style.display = 'none';
+                }
+
+                container!.style.display = showBanner ? 'flex' : 'none';
+            }
+        } catch (err) {
+            console.error('Failed to check alerts:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('archive_token');
+        if (token) {
+            checkAlerts();
+        }
+    });
+
+    document.addEventListener('authStateChange', () => {
+        checkAlerts();
+    });
+</script>

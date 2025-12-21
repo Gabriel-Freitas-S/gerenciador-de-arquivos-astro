@@ -1,0 +1,94 @@
+---
+// Quick Navigation Component
+---
+
+<div class="quick-nav">
+    <h3 class="quick-nav-title">Acesso Rápido</h3>
+    <div class="quick-nav-grid">
+        <a href="/employees" class="quick-nav-item">
+            <span class="quick-nav-icon">👥</span>
+            <span class="quick-nav-label">Funcionários</span>
+        </a>
+        <a href="/cabinets" class="quick-nav-item">
+            <span class="quick-nav-icon">🗄️</span>
+            <span class="quick-nav-label">Gaveteiros</span>
+        </a>
+        <a href="/loans" class="quick-nav-item">
+            <span class="quick-nav-icon">📁</span>
+            <span class="quick-nav-label">Empréstimos</span>
+        </a>
+        <a href="/archive" class="quick-nav-item">
+            <span class="quick-nav-icon">📦</span>
+            <span class="quick-nav-label">Arquivo Morto</span>
+        </a>
+        <a href="/reports" class="quick-nav-item">
+            <span class="quick-nav-icon">📈</span>
+            <span class="quick-nav-label">Relatórios</span>
+        </a>
+        <a href="/settings" class="quick-nav-item">
+            <span class="quick-nav-icon">⚙️</span>
+            <span class="quick-nav-label">Configurações</span>
+        </a>
+    </div>
+</div>
+
+<style>
+    .quick-nav {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .quick-nav-title {
+        margin: 0 0 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .quick-nav-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+
+    .quick-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .quick-nav-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .quick-nav-icon {
+        font-size: 1.5rem;
+    }
+
+    .quick-nav-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+    }
+
+    .quick-nav-item:hover .quick-nav-label {
+        color: #60a5fa;
+    }
+
+    @media (max-width: 480px) {
+        .quick-nav-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>

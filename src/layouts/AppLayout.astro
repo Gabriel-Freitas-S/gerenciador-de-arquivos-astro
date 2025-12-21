@@ -1,0 +1,50 @@
+---
+import '../styles/global.css';
+import Sidebar from '../components/app/Sidebar.astro';
+
+interface Props {
+    title?: string;
+    currentPath?: string;
+}
+
+const { title = 'Arquivo Inteligente', currentPath = '/' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+    </head>
+    <body class="with-sidebar">
+        <Sidebar currentPath={currentPath} />
+        <main class="main-content">
+            <slot />
+        </main>
+        <div id="app-toast" role="status" aria-live="polite"></div>
+        <script type="module" src="/src/scripts/app.ts"></script>
+    </body>
+</html>
+
+<style is:global>
+    body.with-sidebar {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    body.with-sidebar .main-content {
+        flex: 1;
+        margin-left: 260px;
+        padding: 2rem;
+        min-height: 100vh;
+    }
+
+    @media (max-width: 768px) {
+        body.with-sidebar .main-content {
+            margin-left: 0;
+        }
+    }
+</style>
