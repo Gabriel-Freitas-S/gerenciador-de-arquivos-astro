@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "com.gabriel.freitas.arquivo",
   "build": {
-    "beforeDevCommand": "npm run dev:astro",
-    "beforeBuildCommand": "npm run build:astro",
+    "beforeDevCommand": "deno task dev:astro",
+    "beforeBuildCommand": "deno task build:astro",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:4321"
   },

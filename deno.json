@@ -1,0 +1,17 @@
+{
+    "nodeModulesDir": "auto",
+    "tasks": {
+        "dev": "deno run -A npm:@tauri-apps/cli dev",
+        "dev:astro": "deno run -A npm:astro dev",
+        "build": "deno run -A npm:@tauri-apps/cli build",
+        "build:astro": "deno run -A npm:astro build",
+        "preview": "deno run -A npm:astro preview"
+    },
+    "compilerOptions": {
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ]
+    }
+}
