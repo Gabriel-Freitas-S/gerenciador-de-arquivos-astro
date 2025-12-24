@@ -3,15 +3,16 @@ interface Props {
     currentPath?: string;
 }
 
-const { currentPath = '/' } = Astro.props;
+const { currentPath = '/home' } = Astro.props;
 
 const menuItems = [
-    { path: '/', label: 'Dashboard', icon: '📊' },
+    { path: '/home', label: 'Dashboard', icon: '📊' },
     { path: '/employees', label: 'Funcionários', icon: '👥' },
     { path: '/cabinets', label: 'Gaveteiros', icon: '🗄️' },
     { path: '/loans', label: 'Empréstimos', icon: '📁' },
     { path: '/archive', label: 'Arquivo Morto', icon: '📦' },
     { path: '/reports', label: 'Relatórios', icon: '📈' },
+    { path: '/tools/labels', label: 'Etiquetas', icon: '🏷️' },
     { path: '/settings', label: 'Configurações', icon: '⚙️' },
 ];
 ---
@@ -181,3 +182,43 @@ const menuItems = [
         }
     }
 </style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    async function loadUserInfo() {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('auth_session', {
+                payload: { token },
+            }) as { success: boolean; data?: { profile: { name: string } } };
+
+            if (result.success && result.data?.profile) {
+                const nameEl = document.querySelector('[data-user-name]');
+                if (nameEl) {
+                    nameEl.textContent = result.data.profile.name;
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load user info:', err);
+        }
+    }
+
+    document.getElementById('sidebar-logout')?.addEventListener('click', async () => {
+        const token = sessionStorage.getItem('archive_token');
+        if (token) {
+            try {
+                await invoke('auth_logout', { payload: { token } });
+            } catch (err) {
+                console.error('Logout error:', err);
+            }
+        }
+        sessionStorage.removeItem('archive_token');
+        document.body.classList.remove('is-auth');
+        window.location.href = '/';
+    });
+
+    document.addEventListener('DOMContentLoaded', loadUserInfo);
+</script>

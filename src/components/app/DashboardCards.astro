@@ -120,7 +120,7 @@
     import { invoke } from '@tauri-apps/api/core';
 
     async function loadDashboardStats() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         try {
@@ -146,7 +146,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         // Check auth first
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (token) {
             loadDashboardStats();
         }

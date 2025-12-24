@@ -7,11 +7,12 @@
     "npm:@tauri-apps/cli@^2.9.6": "2.9.6",
     "npm:@tauri-apps/plugin-sql@^2.3.1": "2.3.1",
     "npm:@types/bcryptjs@^2.4.6": "2.4.6",
-    "npm:astro@*": "5.16.6_vite@6.4.1__picomatch@4.0.3_zod@3.25.76",
-    "npm:astro@^5.16.6": "5.16.6_vite@6.4.1__picomatch@4.0.3_zod@3.25.76",
+    "npm:astro@*": "5.16.6_typescript@5.9.3_vite@6.4.1__picomatch@4.0.3_zod@3.25.76",
+    "npm:astro@^5.16.6": "5.16.6_typescript@5.9.3_vite@6.4.1__picomatch@4.0.3_zod@3.25.76",
     "npm:drizzle-kit@~0.31.8": "0.31.8_esbuild@0.25.12",
     "npm:drizzle-orm@~0.45.1": "0.45.1",
     "npm:tailwindcss@^4.1.18": "4.1.18",
+    "npm:typescript@^5.9.3": "5.9.3",
     "npm:zod@^4.2.1": "4.2.1"
   },
   "npm": {
@@ -975,7 +976,7 @@
     "array-iterate@2.0.1": {
       "integrity": "sha512-I1jXZMjAgCMmxT4qxXfPXa6SthSoE8h6gkSI9BGGNv8mP8G/v0blc+qFnZu6K42vTOiuME596QaLO0TP3Lk0xg=="
     },
-    "astro@5.16.6_vite@6.4.1__picomatch@4.0.3_zod@3.25.76": {
+    "astro@5.16.6_typescript@5.9.3_vite@6.4.1__picomatch@4.0.3_zod@3.25.76": {
       "integrity": "sha512-6mF/YrvwwRxLTu+aMEa5pwzKUNl5ZetWbTyZCs9Um0F12HUmxUiF5UHiZPy4rifzU3gtpM3xP2DfdmkNX9eZRg==",
       "dependencies": [
         "@astrojs/compiler",
@@ -2533,8 +2534,14 @@
     "trough@2.2.0": {
       "integrity": "sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw=="
     },
-    "tsconfck@3.1.6": {
+    "tsconfck@3.1.6_typescript@5.9.3": {
       "integrity": "sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==",
+      "dependencies": [
+        "typescript"
+      ],
+      "optionalPeers": [
+        "typescript"
+      ],
       "bin": true
     },
     "tslib@2.8.1": {
@@ -2784,6 +2791,7 @@
         "npm:drizzle-kit@~0.31.8",
         "npm:drizzle-orm@~0.45.1",
         "npm:tailwindcss@^4.1.18",
+        "npm:typescript@^5.9.3",
         "npm:zod@^4.2.1"
       ]
     }

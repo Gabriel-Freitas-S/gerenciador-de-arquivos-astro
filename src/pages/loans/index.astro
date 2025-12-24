@@ -304,7 +304,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     let activeTab = 'pending';
 
     async function loadLoansReport() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) {
             window.location.href = '/';
             return;
@@ -327,7 +327,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     }
 
     async function loadLoans() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         try {
@@ -418,7 +418,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
 
     // Return loan
     (window as any).returnLoan = async (loanId: number) => {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         if (!confirm('Confirmar devolução deste empréstimo?')) return;

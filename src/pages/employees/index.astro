@@ -294,7 +294,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     const pageSize = 20;
 
     async function loadEmployees() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) {
             window.location.href = '/';
             return;
@@ -354,7 +354,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     }
 
     async function loadDepartments() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         try {
@@ -383,7 +383,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
         searchTimeout = setTimeout(async () => {
             const query = (e.target as HTMLInputElement).value.trim();
             if (query.length >= 2) {
-                const token = localStorage.getItem('archive_token');
+                const token = sessionStorage.getItem('archive_token');
                 if (!token) return;
 
                 try {
@@ -435,7 +435,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
 
     // Expose to global scope
     (window as any).viewEmployee = (id: number) => {
-        window.location.href = `/employees/${id}`;
+        window.location.href = `/employees/details?id=${id}`;
     };
 
     (window as any).editEmployee = (id: number) => {

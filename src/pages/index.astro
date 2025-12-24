@@ -1,49 +1,258 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import AuthGate from "../components/app/AuthGate.astro";
-import AppHeader from "../components/app/AppHeader.astro";
-import AlertBanner from "../components/app/AlertBanner.astro";
-import DashboardCards from "../components/app/DashboardCards.astro";
-import QuickNav from "../components/app/QuickNav.astro";
-import SummaryPanel from "../components/app/SummaryPanel.astro";
-import StoragePanel from "../components/app/StoragePanel.astro";
-import MovementPanel from "../components/app/MovementPanel.astro";
+import '../styles/global.css';
+
+const title = 'Login - Arquivo Inteligente';
 ---
 
-<Layout>
-	<main
-		class="page-shell flex min-h-screen w-full flex-col gap-10 px-4 py-10 sm:px-6 lg:px-12 lg:py-16 2xl:px-20"
-	>
-		<AuthGate />
-		<section
-			data-section="app"
-			data-hidden="true"
-			class="mx-auto w-full max-w-7xl space-y-6 rounded-[32px] border border-white/10 bg-white/5 p-5 shadow-[0_35px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:p-8"
-		>
-			<AppHeader />
-			
-			<!-- Alert Banner for urgent notifications -->
-			<section data-guarded>
-				<AlertBanner />
-			</section>
-			
-			<!-- Dashboard Stats Cards -->
-			<section data-guarded>
-				<DashboardCards />
-			</section>
-			
-			<!-- Quick Navigation -->
-			<section data-guarded class="grid gap-6 lg:grid-cols-[1fr_320px]">
-				<div class="space-y-6">
-					<SummaryPanel />
-					<div class="grid gap-6 lg:grid-cols-2">
-						<StoragePanel />
-						<MovementPanel />
-					</div>
-				</div>
-				<QuickNav />
-			</section>
-		</section>
-	</main>
-	<div id="app-toast" role="status" aria-live="polite"></div>
-</Layout>
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+    </head>
+    <body class="login-body">
+        <section class="login-page">
+            <div class="login-container">
+                <div class="login-header">
+                    <span class="login-icon">📂</span>
+                    <h1 class="login-title">Arquivo Inteligente</h1>
+                    <p class="login-subtitle">Sistema de Gerenciamento de Arquivos do Departamento Pessoal</p>
+                </div>
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="login-identifier">Usuário</label>
+                        <input 
+                            type="text" 
+                            id="login-identifier" 
+                            name="login" 
+                            placeholder="admin" 
+                            autocomplete="username" 
+                            required 
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Senha</label>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            name="password" 
+                            placeholder="••••••••" 
+                            autocomplete="current-password" 
+                            required 
+                        />
+                    </div>
+                    <button type="submit" class="login-button" id="login-button">Entrar</button>
+                    <span id="auth-error" class="auth-error" hidden></span>
+                </form>
+            </div>
+        </section>
+    </body>
+</html>
+
+<style is:global>
+    .login-body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-page {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 420px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 2.5rem;
+        backdrop-filter: blur(20px);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .login-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .login-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .login-subtitle {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.875rem;
+        margin: 0.5rem 0 0;
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .login-form .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+
+    .login-form label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .login-form input {
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .login-form input:focus {
+        outline: none;
+        border-color: #60a5fa;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .login-form input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .login-button {
+        margin-top: 0.5rem;
+        padding: 0.875rem;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        border: none;
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+    }
+
+    .login-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .auth-error {
+        text-align: center;
+        color: #f87171;
+        font-size: 0.875rem;
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    // Validate existing token before redirecting
+    async function checkExistingSession() {
+        const existingToken = sessionStorage.getItem('archive_token');
+        if (!existingToken) return;
+
+        try {
+            const result = await invoke('auth_session', {
+                payload: { token: existingToken }
+            }) as { success: boolean };
+
+            if (result.success) {
+                window.location.replace('/home');
+            } else {
+                // Invalid token, remove it
+                sessionStorage.removeItem('archive_token');
+            }
+        } catch (err) {
+            // Error validating, remove token
+            sessionStorage.removeItem('archive_token');
+        }
+    }
+
+    checkExistingSession();
+
+    interface LoginResponse {
+        success: boolean;
+        data?: {
+            token: string;
+            profile: { id: number; name: string; login: string; role: string };
+        };
+        error?: string;
+    }
+
+    const form = document.getElementById('login-form') as HTMLFormElement;
+    const loginInput = document.getElementById('login-identifier') as HTMLInputElement;
+    const passwordInput = document.getElementById('login-password') as HTMLInputElement;
+    const errorSpan = document.getElementById('auth-error') as HTMLSpanElement;
+    const submitButton = document.getElementById('login-button') as HTMLButtonElement;
+
+    function showError(message: string) {
+        errorSpan.textContent = message;
+        errorSpan.hidden = false;
+    }
+
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const login = loginInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!login || !password) {
+            showError('Preencha usuário e senha.');
+            return;
+        }
+
+        errorSpan.hidden = true;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Entrando...';
+
+        try {
+            const result = await invoke('auth_login', {
+                payload: { login, password }
+            }) as LoginResponse;
+
+            if (result.success && result.data?.token) {
+                sessionStorage.setItem('archive_token', result.data.token);
+                window.location.href = '/home';
+            } else {
+                showError(result.error || 'Credenciais inválidas.');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Entrar';
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            showError('Erro de conexão. Verifique se o aplicativo está funcionando.');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Entrar';
+        }
+    });
+</script>

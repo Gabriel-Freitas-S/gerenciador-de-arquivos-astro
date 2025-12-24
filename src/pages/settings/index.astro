@@ -291,7 +291,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     const modal = document.getElementById('dept-modal') as HTMLDialogElement;
 
     async function loadDepartments() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) {
             window.location.href = '/';
             return;
@@ -324,7 +324,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     }
 
     async function loadCategories() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         try {
@@ -374,7 +374,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     // Save
     document.getElementById('dept-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         const id = (document.getElementById('dept-id') as HTMLInputElement).value;

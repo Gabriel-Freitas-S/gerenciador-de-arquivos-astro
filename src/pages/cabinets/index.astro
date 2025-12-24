@@ -335,7 +335,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     }
 
     async function loadOccupationMap() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) {
             window.location.href = '/';
             return;

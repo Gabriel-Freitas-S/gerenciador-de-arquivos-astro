@@ -1,0 +1,916 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+---
+
+<AppLayout title="Detalhes do Funcionário - Arquivo Inteligente" currentPath="/employees">
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="/employees" class="back-link">← Voltar</a>
+            <h1 class="page-title" id="employee-name">Carregando...</h1>
+            <p class="page-subtitle" id="employee-registration">-</p>
+        </div>
+        <div class="header-actions" id="header-actions">
+            <button type="button" class="btn-secondary" id="btn-edit">✏️ Editar</button>
+            <button type="button" class="btn-danger" id="btn-terminate">📤 Demitir</button>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-row" id="quick-stats">
+        <div class="stat-card">
+            <span class="stat-icon">📁</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-documents">-</span>
+                <span class="stat-label">Documentos</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📋</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-loans">-</span>
+                <span class="stat-label">Empréstimos</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📍</span>
+            <div class="stat-content">
+                <span class="stat-value" id="stat-location">-</span>
+                <span class="stat-label">Localização</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+        <!-- Employee Info -->
+        <section class="info-card">
+            <h2>📋 Informações Gerais</h2>
+            <div class="info-grid" id="employee-info">
+                <div class="info-item">
+                    <span class="info-label">CPF</span>
+                    <span class="info-value" id="info-cpf">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Departamento</span>
+                    <span class="info-value" id="info-department">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Data de Admissão</span>
+                    <span class="info-value" id="info-admission">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value" id="info-status">-</span>
+                </div>
+                <div class="info-item full-width">
+                    <span class="info-label">Observações</span>
+                    <span class="info-value" id="info-notes">-</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documents by Envelope -->
+        <section class="info-card">
+            <div class="section-header">
+                <h2>📂 Documentos por Envelope</h2>
+                <button type="button" class="btn-add" id="btn-add-document">+ Adicionar</button>
+            </div>
+            <div class="envelopes-grid" id="envelopes-grid">
+                <div class="envelope-card" data-category="PESSOAL">
+                    <div class="envelope-header">
+                        <span class="envelope-icon">👤</span>
+                        <span class="envelope-title">Pessoal</span>
+                    </div>
+                    <div class="envelope-count" id="count-pessoal">0 documentos</div>
+                    <ul class="envelope-docs" id="docs-pessoal"></ul>
+                </div>
+                <div class="envelope-card" data-category="MEDICINA">
+                    <div class="envelope-header">
+                        <span class="envelope-icon">⚕️</span>
+                        <span class="envelope-title">Medicina do Trabalho</span>
+                    </div>
+                    <div class="envelope-count" id="count-medicina">0 documentos</div>
+                    <ul class="envelope-docs" id="docs-medicina"></ul>
+                </div>
+                <div class="envelope-card" data-category="SEGURANCA">
+                    <div class="envelope-header">
+                        <span class="envelope-icon">🦺</span>
+                        <span class="envelope-title">Segurança do Trabalho</span>
+                    </div>
+                    <div class="envelope-count" id="count-seguranca">0 documentos</div>
+                    <ul class="envelope-docs" id="docs-seguranca"></ul>
+                </div>
+                <div class="envelope-card" data-category="TREINAMENTO">
+                    <div class="envelope-header">
+                        <span class="envelope-icon">📚</span>
+                        <span class="envelope-title">Treinamento</span>
+                    </div>
+                    <div class="envelope-count" id="count-treinamento">0 documentos</div>
+                    <ul class="envelope-docs" id="docs-treinamento"></ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loan History -->
+        <section class="info-card">
+            <h2>📜 Histórico de Empréstimos</h2>
+            <div class="table-container">
+                <table class="data-table" id="loans-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Solicitante</th>
+                            <th>Motivo</th>
+                            <th>Status</th>
+                            <th>Devolução</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loans-tbody">
+                        <tr class="loading-row">
+                            <td colspan="5">Carregando histórico...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Terminate Modal -->
+    <dialog id="terminate-modal" class="modal">
+        <div class="modal-content">
+            <h3>📤 Demitir Funcionário</h3>
+            <p class="modal-desc">Esta ação irá:</p>
+            <ul class="modal-list">
+                <li>Registrar a data de demissão</li>
+                <li>Transferir a pasta para o Arquivo Morto</li>
+                <li>Liberar a posição no gaveteiro</li>
+            </ul>
+            <form id="terminate-form">
+                <div class="form-group">
+                    <label for="termination-date">Data de Demissão</label>
+                    <input type="date" id="termination-date" required />
+                </div>
+                <div class="form-group">
+                    <label for="target-box">Caixa de Destino</label>
+                    <select id="target-box" required>
+                        <option value="">Selecione uma caixa...</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="btn-cancel-terminate">Cancelar</button>
+                    <button type="submit" class="btn-danger">Confirmar Demissão</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Add Document Modal -->
+    <dialog id="document-modal" class="modal">
+        <div class="modal-content">
+            <h3>📄 Adicionar Documento</h3>
+            <form id="document-form">
+                <div class="form-group">
+                    <label for="doc-category">Categoria</label>
+                    <select id="doc-category" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="doc-type">Tipo de Documento</label>
+                    <select id="doc-type" required>
+                        <option value="">Selecione a categoria primeiro...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="doc-date">Data do Documento</label>
+                    <input type="date" id="doc-date" />
+                </div>
+                <div class="form-group">
+                    <label for="doc-description">Descrição</label>
+                    <textarea id="doc-description" rows="2" placeholder="Observações sobre o documento..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="btn-cancel-document">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar Documento</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+</AppLayout>
+
+<style>
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #60a5fa;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.25rem 0 0;
+        font-size: 0.9375rem;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-secondary {
+        padding: 0.625rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-danger {
+        padding: 0.625rem 1rem;
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        color: #ef4444;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.25);
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-icon {
+        font-size: 1.75rem;
+    }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .stat-label {
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .content-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .info-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .info-card h2 {
+        margin: 0 0 1.25rem;
+        font-size: 1.125rem;
+        color: white;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+
+    .section-header h2 {
+        margin: 0;
+    }
+
+    .btn-add {
+        padding: 0.375rem 0.75rem;
+        background: rgba(59, 130, 246, 0.15);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 6px;
+        color: #60a5fa;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .btn-add:hover {
+        background: rgba(59, 130, 246, 0.25);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .info-item.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .info-value {
+        font-size: 0.9375rem;
+        color: white;
+    }
+
+    .envelopes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+    }
+
+    .envelope-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.2s;
+    }
+
+    .envelope-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .envelope-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .envelope-icon {
+        font-size: 1.25rem;
+    }
+
+    .envelope-title {
+        font-weight: 600;
+        color: white;
+    }
+
+    .envelope-count {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 0.75rem;
+    }
+
+    .envelope-docs {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    .envelope-docs li {
+        padding: 0.375rem 0;
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.7);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .envelope-docs li:last-child {
+        border-bottom: none;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        padding: 0.75rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.5);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .data-table td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.85);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .loading-row td {
+        text-align: center;
+        padding: 2rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-badge.active {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+    }
+
+    .status-badge.terminated {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+
+    .status-badge.borrowed {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+    }
+
+    .status-badge.returned {
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+    }
+
+    /* Modal */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: transparent;
+        border: none;
+        padding: 0;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .modal::backdrop {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1e293b;
+        border-radius: 16px;
+        padding: 1.5rem;
+        width: 90%;
+        max-width: 450px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-content h3 {
+        margin: 0 0 1rem;
+        color: white;
+    }
+
+    .modal-desc {
+        color: rgba(255, 255, 255, 0.7);
+        margin: 0 0 0.5rem;
+    }
+
+    .modal-list {
+        margin: 0 0 1.5rem;
+        padding-left: 1.25rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.875rem;
+    }
+
+    .modal-list li {
+        margin-bottom: 0.25rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.375rem;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.625rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9375rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+    }
+
+    .form-group select option {
+        background: #1e293b;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-cancel {
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+    }
+
+    .btn-save {
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    interface Employee {
+        id: number;
+        full_name: string;
+        registration: string;
+        cpf: string | null;
+        department_name: string | null;
+        admission_date: string;
+        termination_date: string | null;
+        status: string;
+        drawer_position_id: number | null;
+        notes: string | null;
+    }
+
+    interface Document {
+        id: number;
+        category_id: number;
+        category_code: string;
+        type_name: string;
+        document_date: string | null;
+        description: string | null;
+    }
+
+    interface Loan {
+        id: number;
+        requester_name: string;
+        reason: string;
+        loan_date: string;
+        expected_return_date: string;
+        actual_return_date: string | null;
+        status: string;
+    }
+
+    interface Category {
+        id: number;
+        name: string;
+        code: string;
+    }
+
+    interface DocumentType {
+        id: number;
+        category_id: number;
+        name: string;
+    }
+
+    // Get employee ID from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const employeeId = parseInt(urlParams.get('id') || '0');
+    
+    if (!employeeId) {
+        window.location.href = '/employees';
+    }
+
+    const terminateModal = document.getElementById('terminate-modal') as HTMLDialogElement;
+    const documentModal = document.getElementById('document-modal') as HTMLDialogElement;
+
+    let categories: Category[] = [];
+    let documentTypes: DocumentType[] = [];
+
+    async function loadEmployeeDetails() {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) {
+            window.location.href = '/';
+            return;
+        }
+
+        try {
+            const result = await invoke('get_employee', {
+                payload: { token, id: employeeId },
+            }) as { success: boolean; data?: { employee: Employee; documents: Document[]; loans: Loan[] }; error?: string };
+
+            if (result.success && result.data) {
+                renderEmployeeDetails(result.data.employee);
+                renderDocuments(result.data.documents);
+                renderLoans(result.data.loans);
+            } else {
+                console.error('Error:', result.error);
+            }
+        } catch (err) {
+            console.error('Failed to load employee:', err);
+        }
+    }
+
+    function renderEmployeeDetails(emp: Employee) {
+        document.getElementById('employee-name')!.textContent = emp.full_name;
+        document.getElementById('employee-registration')!.textContent = `Matrícula: ${emp.registration}`;
+
+        document.getElementById('info-cpf')!.textContent = emp.cpf || 'Não informado';
+        document.getElementById('info-department')!.textContent = emp.department_name || 'Não atribuído';
+        document.getElementById('info-admission')!.textContent = new Date(emp.admission_date).toLocaleDateString('pt-BR');
+        
+        const statusEl = document.getElementById('info-status')!;
+        if (emp.status === 'ACTIVE') {
+            statusEl.innerHTML = '<span class="status-badge active">Ativo</span>';
+        } else {
+            statusEl.innerHTML = `<span class="status-badge terminated">Demitido em ${emp.termination_date ? new Date(emp.termination_date).toLocaleDateString('pt-BR') : '-'}</span>`;
+        }
+
+        document.getElementById('info-notes')!.textContent = emp.notes || 'Nenhuma observação';
+        document.getElementById('stat-location')!.textContent = emp.drawer_position_id ? 'Alocado' : 'Não alocado';
+
+        // Hide terminate button if already terminated
+        if (emp.status !== 'ACTIVE') {
+            (document.getElementById('btn-terminate') as HTMLButtonElement).style.display = 'none';
+        }
+    }
+
+    function renderDocuments(docs: Document[]) {
+        const counts: Record<string, number> = { pessoal: 0, medicina: 0, seguranca: 0, treinamento: 0 };
+        const lists: Record<string, string[]> = { pessoal: [], medicina: [], seguranca: [], treinamento: [] };
+
+        docs.forEach(doc => {
+            const key = doc.category_code.toLowerCase();
+            if (counts[key] !== undefined) {
+                counts[key]++;
+                const dateStr = doc.document_date ? new Date(doc.document_date).toLocaleDateString('pt-BR') : '';
+                lists[key].push(`${doc.type_name}${dateStr ? ` (${dateStr})` : ''}`);
+            }
+        });
+
+        Object.keys(counts).forEach(key => {
+            document.getElementById(`count-${key}`)!.textContent = `${counts[key]} documento${counts[key] !== 1 ? 's' : ''}`;
+            const listEl = document.getElementById(`docs-${key}`)!;
+            listEl.innerHTML = lists[key].length > 0 
+                ? lists[key].map(d => `<li>${d}</li>`).join('')
+                : '<li style="color: rgba(255,255,255,0.4)">Nenhum documento</li>';
+        });
+
+        document.getElementById('stat-documents')!.textContent = docs.length.toString();
+    }
+
+    function renderLoans(loans: Loan[]) {
+        const tbody = document.getElementById('loans-tbody')!;
+        document.getElementById('stat-loans')!.textContent = loans.filter(l => l.status === 'BORROWED').length.toString();
+
+        if (loans.length === 0) {
+            tbody.innerHTML = '<tr class="loading-row"><td colspan="5">Nenhum empréstimo registrado</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = loans.map(loan => {
+            const statusClass = loan.status === 'RETURNED' ? 'returned' : 'borrowed';
+            const statusText = loan.status === 'RETURNED' ? 'Devolvido' : 'Emprestado';
+
+            return `
+                <tr>
+                    <td>${new Date(loan.loan_date).toLocaleDateString('pt-BR')}</td>
+                    <td>${loan.requester_name}</td>
+                    <td>${loan.reason}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${loan.actual_return_date ? new Date(loan.actual_return_date).toLocaleDateString('pt-BR') : '-'}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function loadCategories() {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('list_document_categories', { payload: { token } }) as { success: boolean; data?: Category[] };
+            if (result.success && result.data) {
+                categories = result.data;
+                const select = document.getElementById('doc-category') as HTMLSelectElement;
+                select.innerHTML = '<option value="">Selecione...</option>' + 
+                    categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            }
+        } catch (err) {
+            console.error('Failed to load categories:', err);
+        }
+    }
+
+    async function loadDocumentTypes(categoryId: number) {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('list_document_types', { payload: { token, category_id: categoryId } }) as { success: boolean; data?: DocumentType[] };
+            if (result.success && result.data) {
+                documentTypes = result.data;
+                const select = document.getElementById('doc-type') as HTMLSelectElement;
+                select.innerHTML = '<option value="">Selecione...</option>' + 
+                    documentTypes.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            }
+        } catch (err) {
+            console.error('Failed to load types:', err);
+        }
+    }
+
+    async function loadArchiveBoxes() {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('list_archive_boxes', { payload: { token } }) as { success: boolean; data?: any[] };
+            if (result.success && result.data) {
+                const select = document.getElementById('target-box') as HTMLSelectElement;
+                select.innerHTML = '<option value="">Selecione uma caixa...</option>' + 
+                    result.data.map(b => `<option value="${b.id}">${b.box_number} (${b.year}) - ${b.current_count}/${b.capacity}</option>`).join('');
+            }
+        } catch (err) {
+            console.error('Failed to load boxes:', err);
+        }
+    }
+
+    // Event Listeners
+    document.getElementById('btn-edit')?.addEventListener('click', () => {
+        window.location.href = `/employees/form?id=${employeeId}`;
+    });
+
+    document.getElementById('btn-terminate')?.addEventListener('click', () => {
+        loadArchiveBoxes();
+        (document.getElementById('termination-date') as HTMLInputElement).valueAsDate = new Date();
+        terminateModal.showModal();
+    });
+
+    document.getElementById('btn-cancel-terminate')?.addEventListener('click', () => {
+        terminateModal.close();
+    });
+
+    document.getElementById('terminate-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        const terminationDate = (document.getElementById('termination-date') as HTMLInputElement).value;
+        const boxId = parseInt((document.getElementById('target-box') as HTMLSelectElement).value);
+
+        try {
+            const result = await invoke('terminate_employee', {
+                payload: { token, employee_id: employeeId, termination_date: terminationDate, box_id: boxId },
+            }) as { success: boolean; error?: string };
+
+            if (result.success) {
+                terminateModal.close();
+                loadEmployeeDetails();
+            } else {
+                alert('Erro: ' + result.error);
+            }
+        } catch (err) {
+            console.error('Failed to terminate:', err);
+        }
+    });
+
+    document.getElementById('btn-add-document')?.addEventListener('click', () => {
+        loadCategories();
+        documentModal.showModal();
+    });
+
+    document.getElementById('btn-cancel-document')?.addEventListener('click', () => {
+        documentModal.close();
+    });
+
+    document.getElementById('doc-category')?.addEventListener('change', (e) => {
+        const categoryId = parseInt((e.target as HTMLSelectElement).value);
+        if (categoryId) {
+            loadDocumentTypes(categoryId);
+        }
+    });
+
+    document.getElementById('document-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        const categoryId = parseInt((document.getElementById('doc-category') as HTMLSelectElement).value);
+        const typeId = parseInt((document.getElementById('doc-type') as HTMLSelectElement).value);
+        const docDate = (document.getElementById('doc-date') as HTMLInputElement).value;
+        const description = (document.getElementById('doc-description') as HTMLTextAreaElement).value;
+
+        try {
+            const result = await invoke('create_document', {
+                payload: {
+                    token,
+                    employee_id: employeeId,
+                    category_id: categoryId,
+                    type_id: typeId,
+                    document_date: docDate || null,
+                    description: description || null,
+                },
+            }) as { success: boolean; error?: string };
+
+            if (result.success) {
+                documentModal.close();
+                loadEmployeeDetails();
+            } else {
+                alert('Erro: ' + result.error);
+            }
+        } catch (err) {
+            console.error('Failed to create document:', err);
+        }
+    });
+
+    // Init
+    document.addEventListener('DOMContentLoaded', loadEmployeeDetails);
+</script>

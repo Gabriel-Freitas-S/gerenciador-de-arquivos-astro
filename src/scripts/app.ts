@@ -9,7 +9,7 @@ import { handleLogin, handleLogout, resumeSession } from './modules/auth.js';
 import { handleStorageCreation } from './modules/storage.js';
 import { handleMovement } from './modules/movements.js';
 
-const STORAGE_KEY = 'archive::token';
+const STORAGE_KEY = 'archive_token';
 
 export type UserProfile = LoginResult['profile'];
 

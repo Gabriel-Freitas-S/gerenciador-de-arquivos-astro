@@ -62,12 +62,18 @@ export function setGuardState(locked: boolean) {
 }
 
 export function setSectionVisibility(isAuthenticated: boolean) {
+    // Toggle is-auth class on body for CSS rules
+    document.body.classList.toggle('is-auth', isAuthenticated);
+
     if (dom.loginSection) {
-        dom.loginSection.dataset.hidden = isAuthenticated ? 'true' : 'false';
+        (dom.loginSection as HTMLElement).style.display = isAuthenticated ? 'none' : 'flex';
     }
     if (dom.appSection) {
-        dom.appSection.dataset.hidden = isAuthenticated ? 'false' : 'true';
+        (dom.appSection as HTMLElement).style.display = isAuthenticated ? 'flex' : 'none';
     }
+
+    // Scroll to top
+    window.scrollTo(0, 0);
 }
 
 export function renderSummary(snapshot: SnapshotSummary | null) {

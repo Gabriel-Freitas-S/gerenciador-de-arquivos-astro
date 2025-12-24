@@ -7,7 +7,7 @@ interface Props {
     currentPath?: string;
 }
 
-const { title = 'Arquivo Inteligente', currentPath = '/' } = Astro.props;
+const { title = 'Arquivo Inteligente', currentPath = '/home' } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,23 +19,39 @@ const { title = 'Arquivo Inteligente', currentPath = '/' } = Astro.props;
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
     </head>
-    <body class="with-sidebar">
-        <Sidebar currentPath={currentPath} />
-        <main class="main-content">
-            <slot />
-        </main>
+    <body class="app-body">
+        <!-- Check auth immediately -->
+        <script is:inline>
+            (function() {
+                var token = sessionStorage.getItem('archive_token');
+                if (!token) {
+                    window.location.replace('/');
+                }
+            })();
+        </script>
+        
+        <div class="app-shell">
+            <Sidebar currentPath={currentPath} />
+            <main class="main-content">
+                <slot />
+            </main>
+        </div>
+        
         <div id="app-toast" role="status" aria-live="polite"></div>
-        <script type="module" src="/src/scripts/app.ts"></script>
     </body>
 </html>
 
 <style is:global>
-    body.with-sidebar {
+    .app-body {
+        min-height: 100vh;
+    }
+
+    .app-shell {
         display: flex;
         min-height: 100vh;
     }
 
-    body.with-sidebar .main-content {
+    .main-content {
         flex: 1;
         margin-left: 260px;
         padding: 2rem;
@@ -43,8 +59,31 @@ const { title = 'Arquivo Inteligente', currentPath = '/' } = Astro.props;
     }
 
     @media (max-width: 768px) {
-        body.with-sidebar .main-content {
+        .main-content {
             margin-left: 0;
         }
+    }
+
+    #app-toast {
+        position: fixed;
+        bottom: 20px;
+        right: 24px;
+        background: rgba(15, 23, 42, 0.95);
+        padding: 0.8rem 1.2rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transform: translateY(120%);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        z-index: 1000;
+    }
+
+    #app-toast.visible {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    #app-toast[data-type='error'] {
+        background: rgba(239, 68, 68, 0.9);
     }
 </style>

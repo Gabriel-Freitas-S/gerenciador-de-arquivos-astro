@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::Result;
-use bcrypt::{hash, verify, DEFAULT_COST};
+use bcrypt::verify;
 use chrono::Utc;
 use serde_json::Value;
 use sqlx::{
@@ -14,7 +14,7 @@ use crate::types::{
     MovementData, MovementRecord, SnapshotSummary, StoragePayload, StorageUnitRecord, UserProfile,
 };
 
-const MIGRATIONS: [&str; 39] = [
+const MIGRATIONS: [&str; 40] = [
     "CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
@@ -218,6 +218,8 @@ const MIGRATIONS: [&str; 39] = [
     "CREATE INDEX IF NOT EXISTS idx_loans_employee ON loans(employee_id)",
     "CREATE INDEX IF NOT EXISTS idx_dead_archive_employee ON dead_archive_items(employee_id)",
     "CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at)",
+    // Insert default admin user with password 'admin123'
+    "INSERT OR IGNORE INTO users (name, login, password_hash, role) VALUES ('Administrador', 'admin', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.rMGnDIPZEmMHXO', 'admin')",
 ];
 
 pub struct ArchiveDatabase {
@@ -253,52 +255,6 @@ impl ArchiveDatabase {
             sqlx::query(ddl).execute(&self.pool).await?;
         }
         self.ensure_login_column().await?;
-        Ok(())
-    }
-
-    pub async fn ensure_default_admin(&self, login: &str, password: &str) -> Result<()> {
-        let normalized = login.trim().to_lowercase();
-        if normalized.is_empty() {
-            return Ok(());
-        }
-
-        println!("Verificando admin padrão: {}", normalized);
-        let existing = sqlx::query(
-            "SELECT id FROM users WHERE LOWER(login) = ? OR LOWER(login) LIKE ? LIMIT 1",
-        )
-        .bind(&normalized)
-        .bind(format!("{}@%", normalized))
-        .fetch_optional(&self.pool)
-        .await?;
-
-        let hash = hash(password, DEFAULT_COST)?;
-
-        if let Some(row) = existing {
-            let id: i64 = row.get(0);
-            sqlx::query("UPDATE users SET login = ?, password_hash = ? WHERE id = ?")
-                .bind(&normalized)
-                .bind(hash)
-                .bind(id)
-                .execute(&self.pool)
-                .await?;
-        } else {
-            sqlx::query(
-                "INSERT INTO users (name, login, password_hash, role) VALUES (?, ?, ?, 'admin')",
-            )
-            .bind("Administrador")
-            .bind(&normalized)
-            .bind(hash)
-            .execute(&self.pool)
-            .await?;
-        }
-
-        // If the configured admin is NOT "admin", remove the old default "admin" user if it exists
-        if normalized != "admin" {
-            sqlx::query("DELETE FROM users WHERE login = 'admin'")
-                .execute(&self.pool)
-                .await?;
-        }
-
         Ok(())
     }
 

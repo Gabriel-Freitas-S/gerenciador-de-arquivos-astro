@@ -4,7 +4,7 @@ import type { AppState } from '../app.js';
 import { refreshStorage } from './storage.js';
 import { refreshMovements } from './movements.js';
 
-const STORAGE_KEY = 'archive::token';
+const STORAGE_KEY = 'archive_token';
 
 export async function handleLogin(state: AppState) {
     if (!dom.identifierInput || !dom.passwordInput) return;

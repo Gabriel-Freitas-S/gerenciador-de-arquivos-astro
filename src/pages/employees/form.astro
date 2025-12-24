@@ -1,0 +1,541 @@
+---
+import AppLayout from '../../layouts/AppLayout.astro';
+
+const url = new URL(Astro.request.url);
+const editId = url.searchParams.get('id');
+const isEdit = !!editId;
+---
+
+<AppLayout title={isEdit ? "Editar Funcionário" : "Novo Funcionário"} currentPath="/employees">
+    <div class="page-header">
+        <div class="page-header-content">
+            <a href="/employees" class="back-link">← Voltar</a>
+            <h1 class="page-title">{isEdit ? "✏️ Editar Funcionário" : "➕ Novo Funcionário"}</h1>
+            <p class="page-subtitle">{isEdit ? "Atualize os dados do funcionário" : "Preencha os dados para criar um novo funcionário"}</p>
+        </div>
+    </div>
+
+    <form id="employee-form" class="employee-form">
+        <input type="hidden" id="employee-id" value={editId || ""} />
+
+        <section class="form-section">
+            <h2>📋 Dados Pessoais</h2>
+            <div class="form-grid">
+                <div class="form-group span-2">
+                    <label for="full_name">Nome Completo *</label>
+                    <input type="text" id="full_name" name="full_name" required placeholder="Nome completo do funcionário" />
+                </div>
+                <div class="form-group">
+                    <label for="registration">Matrícula *</label>
+                    <input type="text" id="registration" name="registration" required placeholder="Ex: 12345" />
+                </div>
+                <div class="form-group">
+                    <label for="cpf">CPF</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" />
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>🏢 Dados Profissionais</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="department_id">Departamento</label>
+                    <select id="department_id" name="department_id">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="admission_date">Data de Admissão *</label>
+                    <input type="date" id="admission_date" name="admission_date" required />
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>📁 Localização no Arquivo</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="file_cabinet_id">Gaveteiro</label>
+                    <select id="file_cabinet_id" name="file_cabinet_id">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="drawer_id">Gaveta</label>
+                    <select id="drawer_id" name="drawer_id" disabled>
+                        <option value="">Selecione o gaveteiro primeiro...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="position">Posição na Gaveta</label>
+                    <select id="position" name="position" disabled>
+                        <option value="">Selecione a gaveta primeiro...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-hint">
+                💡 A pasta será guardada em ordem alfabética. O sistema irá sugerir a melhor posição automaticamente.
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>📝 Observações</h2>
+            <div class="form-group">
+                <textarea id="notes" name="notes" rows="3" placeholder="Anotações adicionais sobre o funcionário..."></textarea>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" id="btn-cancel">Cancelar</button>
+            <button type="submit" class="btn-save" id="btn-save">
+                {isEdit ? "💾 Salvar Alterações" : "✅ Cadastrar Funcionário"}
+            </button>
+        </div>
+    </form>
+</AppLayout>
+
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: #60a5fa;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0.25rem 0 0;
+        font-size: 0.9375rem;
+    }
+
+    .employee-form {
+        max-width: 800px;
+    }
+
+    .form-section {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-section h2 {
+        margin: 0 0 1.25rem;
+        font-size: 1.125rem;
+        color: white;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+
+    .form-group.span-2 {
+        grid-column: span 2;
+    }
+
+    @media (max-width: 640px) {
+        .form-group.span-2 {
+            grid-column: span 1;
+        }
+    }
+
+    .form-group label {
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: white;
+        font-size: 0.9375rem;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .form-group select {
+        cursor: pointer;
+    }
+
+    .form-group select option {
+        background: #1e293b;
+        color: white;
+    }
+
+    .form-group select:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .form-hint {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 8px;
+        font-size: 0.8125rem;
+        color: #93c5fd;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-cancel {
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .btn-save {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #3b82f6, #6366f1);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-save:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+</style>
+
+<script>
+    import { invoke } from '@tauri-apps/api/core';
+
+    interface Employee {
+        id: number;
+        full_name: string;
+        registration: string;
+        cpf: string | null;
+        department_id: number | null;
+        admission_date: string;
+        drawer_position_id: number | null;
+        notes: string | null;
+    }
+
+    interface Department {
+        id: number;
+        name: string;
+    }
+
+    interface FileCabinet {
+        id: number;
+        number: string;
+    }
+
+    interface Drawer {
+        id: number;
+        number: number;
+        capacity: number;
+    }
+
+    interface Position {
+        position: number;
+        is_occupied: boolean;
+    }
+
+    const employeeId = (document.getElementById('employee-id') as HTMLInputElement).value;
+    const isEdit = !!employeeId;
+
+    async function loadDepartments() {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) {
+            window.location.href = '/';
+            return;
+        }
+
+        try {
+            const result = await invoke('list_departments', { payload: { token } }) as { success: boolean; data?: Department[] };
+            if (result.success && result.data) {
+                const select = document.getElementById('department_id') as HTMLSelectElement;
+                result.data.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept.id.toString();
+                    option.textContent = dept.name;
+                    select.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load departments:', err);
+        }
+    }
+
+    async function loadFileCabinets() {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('list_file_cabinets', { payload: { token } }) as { success: boolean; data?: FileCabinet[] };
+            if (result.success && result.data) {
+                const select = document.getElementById('file_cabinet_id') as HTMLSelectElement;
+                result.data.forEach(cab => {
+                    const option = document.createElement('option');
+                    option.value = cab.id.toString();
+                    option.textContent = `Gaveteiro ${cab.number}`;
+                    select.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load cabinets:', err);
+        }
+    }
+
+    async function loadDrawers(cabinetId: number) {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('list_drawers', { payload: { token, file_cabinet_id: cabinetId } }) as { success: boolean; data?: Drawer[] };
+            if (result.success && result.data) {
+                const select = document.getElementById('drawer_id') as HTMLSelectElement;
+                select.innerHTML = '<option value="">Selecione...</option>';
+                result.data.forEach(drawer => {
+                    const option = document.createElement('option');
+                    option.value = drawer.id.toString();
+                    option.textContent = `Gaveta ${drawer.number} (capacidade: ${drawer.capacity})`;
+                    select.appendChild(option);
+                });
+                select.disabled = false;
+            }
+        } catch (err) {
+            console.error('Failed to load drawers:', err);
+        }
+    }
+
+    async function loadPositions(drawerId: number) {
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('list_drawer_positions', { payload: { token, drawer_id: drawerId } }) as { success: boolean; data?: Position[] };
+            if (result.success && result.data) {
+                const select = document.getElementById('position') as HTMLSelectElement;
+                select.innerHTML = '<option value="">Selecione...</option>';
+                result.data.filter(p => !p.is_occupied).forEach(pos => {
+                    const option = document.createElement('option');
+                    option.value = pos.position.toString();
+                    option.textContent = `Posição ${pos.position}`;
+                    select.appendChild(option);
+                });
+                select.disabled = false;
+            }
+        } catch (err) {
+            console.error('Failed to load positions:', err);
+        }
+    }
+
+    async function loadEmployeeData() {
+        if (!isEdit) return;
+
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        try {
+            const result = await invoke('get_employee', { payload: { token, id: parseInt(employeeId) } }) as { success: boolean; data?: { employee: Employee } };
+            if (result.success && result.data) {
+                const emp = result.data.employee;
+                (document.getElementById('full_name') as HTMLInputElement).value = emp.full_name;
+                (document.getElementById('registration') as HTMLInputElement).value = emp.registration;
+                (document.getElementById('cpf') as HTMLInputElement).value = emp.cpf || '';
+                (document.getElementById('admission_date') as HTMLInputElement).value = emp.admission_date.split('T')[0];
+                (document.getElementById('notes') as HTMLTextAreaElement).value = emp.notes || '';
+
+                if (emp.department_id) {
+                    (document.getElementById('department_id') as HTMLSelectElement).value = emp.department_id.toString();
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load employee:', err);
+        }
+    }
+
+    // CPF mask
+    document.getElementById('cpf')?.addEventListener('input', (e) => {
+        let value = (e.target as HTMLInputElement).value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        
+        if (value.length > 9) {
+            value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        } else if (value.length > 6) {
+            value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        } else if (value.length > 3) {
+            value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+        }
+        
+        (e.target as HTMLInputElement).value = value;
+    });
+
+    // Cabinet change -> load drawers
+    document.getElementById('file_cabinet_id')?.addEventListener('change', (e) => {
+        const cabinetId = parseInt((e.target as HTMLSelectElement).value);
+        const drawerSelect = document.getElementById('drawer_id') as HTMLSelectElement;
+        const positionSelect = document.getElementById('position') as HTMLSelectElement;
+
+        if (cabinetId) {
+            loadDrawers(cabinetId);
+        } else {
+            drawerSelect.innerHTML = '<option value="">Selecione o gaveteiro primeiro...</option>';
+            drawerSelect.disabled = true;
+            positionSelect.innerHTML = '<option value="">Selecione a gaveta primeiro...</option>';
+            positionSelect.disabled = true;
+        }
+    });
+
+    // Drawer change -> load positions
+    document.getElementById('drawer_id')?.addEventListener('change', (e) => {
+        const drawerId = parseInt((e.target as HTMLSelectElement).value);
+        const positionSelect = document.getElementById('position') as HTMLSelectElement;
+
+        if (drawerId) {
+            loadPositions(drawerId);
+        } else {
+            positionSelect.innerHTML = '<option value="">Selecione a gaveta primeiro...</option>';
+            positionSelect.disabled = true;
+        }
+    });
+
+    // Cancel button
+    document.getElementById('btn-cancel')?.addEventListener('click', () => {
+        window.location.href = '/employees';
+    });
+
+    // Form submit
+    document.getElementById('employee-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = sessionStorage.getItem('archive_token');
+        if (!token) return;
+
+        const btn = document.getElementById('btn-save') as HTMLButtonElement;
+        btn.disabled = true;
+        btn.textContent = 'Salvando...';
+
+        const formData = {
+            full_name: (document.getElementById('full_name') as HTMLInputElement).value,
+            registration: (document.getElementById('registration') as HTMLInputElement).value,
+            cpf: (document.getElementById('cpf') as HTMLInputElement).value.replace(/\D/g, '') || null,
+            department_id: parseInt((document.getElementById('department_id') as HTMLSelectElement).value) || null,
+            admission_date: (document.getElementById('admission_date') as HTMLInputElement).value,
+            notes: (document.getElementById('notes') as HTMLTextAreaElement).value || null,
+        };
+
+        const drawerId = parseInt((document.getElementById('drawer_id') as HTMLSelectElement).value);
+        const position = parseInt((document.getElementById('position') as HTMLSelectElement).value);
+
+        try {
+            let result;
+            if (isEdit) {
+                result = await invoke('update_employee', {
+                    payload: { token, id: parseInt(employeeId), ...formData },
+                }) as { success: boolean; error?: string };
+            } else {
+                result = await invoke('create_employee', {
+                    payload: { token, data: formData },
+                }) as { success: boolean; data?: { id: number }; error?: string };
+
+                // If position was selected, assign it
+                if (result.success && result.data && drawerId && position) {
+                    await invoke('assign_employee_position', {
+                        payload: { token, employee_id: result.data.id, drawer_id: drawerId, position },
+                    });
+                }
+            }
+
+            if (result.success) {
+                window.location.href = '/employees';
+            } else {
+                alert('Erro: ' + result.error);
+                btn.disabled = false;
+                btn.textContent = isEdit ? '💾 Salvar Alterações' : '✅ Cadastrar Funcionário';
+            }
+        } catch (err) {
+            console.error('Failed to save:', err);
+            alert('Erro ao salvar funcionário');
+            btn.disabled = false;
+            btn.textContent = isEdit ? '💾 Salvar Alterações' : '✅ Cadastrar Funcionário';
+        }
+    });
+
+    // Init
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadDepartments();
+        await loadFileCabinets();
+        await loadEmployeeData();
+    });
+</script>

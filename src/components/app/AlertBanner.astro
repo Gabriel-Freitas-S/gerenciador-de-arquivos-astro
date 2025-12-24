@@ -109,7 +109,7 @@
     import { invoke } from '@tauri-apps/api/core';
 
     async function checkAlerts() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         try {
@@ -151,7 +151,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (token) {
             checkAlerts();
         }

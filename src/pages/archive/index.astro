@@ -279,7 +279,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     }
 
     async function loadBoxes() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) {
             window.location.href = '/';
             return;
@@ -326,7 +326,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
     }
 
     async function loadDisposalCandidates() {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         try {
@@ -384,7 +384,7 @@ import AppLayout from '../../layouts/AppLayout.astro';
 
     // Register disposal
     (window as any).registerDisposal = async (itemId: number) => {
-        const token = localStorage.getItem('archive_token');
+        const token = sessionStorage.getItem('archive_token');
         if (!token) return;
 
         if (!confirm('Confirmar descarte deste documento?')) return;

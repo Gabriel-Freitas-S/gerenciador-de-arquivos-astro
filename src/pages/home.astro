@@ -1,0 +1,73 @@
+---
+import AppLayout from "../layouts/AppLayout.astro";
+import AlertBanner from "../components/app/AlertBanner.astro";
+import DashboardCards from "../components/app/DashboardCards.astro";
+import SummaryPanel from "../components/app/SummaryPanel.astro";
+import StoragePanel from "../components/app/StoragePanel.astro";
+import MovementPanel from "../components/app/MovementPanel.astro";
+---
+
+<AppLayout title="Dashboard - Arquivo Inteligente" currentPath="/home">
+	<div class="dashboard-header">
+		<h1 class="dashboard-title">📊 Dashboard</h1>
+		<p class="dashboard-subtitle">Visão geral do sistema de arquivos</p>
+	</div>
+	
+	<section>
+		<AlertBanner />
+	</section>
+	
+	<section>
+		<DashboardCards />
+	</section>
+	
+	<section class="panels-grid">
+		<div class="panels-main">
+			<SummaryPanel />
+			<div class="panels-row">
+				<StoragePanel />
+				<MovementPanel />
+			</div>
+		</div>
+	</section>
+</AppLayout>
+
+<style>
+	.dashboard-header {
+		margin-bottom: 1.5rem;
+	}
+
+	.dashboard-title {
+		font-size: 1.75rem;
+		font-weight: 700;
+		margin: 0;
+		background: linear-gradient(135deg, #60a5fa, #a78bfa);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.dashboard-subtitle {
+		color: rgba(255, 255, 255, 0.6);
+		margin: 0.25rem 0 0;
+		font-size: 0.9375rem;
+	}
+
+	.panels-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.panels-main {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.panels-row {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 1.5rem;
+	}
+</style>

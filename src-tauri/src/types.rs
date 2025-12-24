@@ -83,6 +83,7 @@ pub struct IdPayload {
     pub id: i64,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize, Validate)]
 pub struct IdsPayload {
     #[validate(length(min = 1, message = "Token não pode ser vazio"))]
@@ -282,6 +283,7 @@ pub struct EmployeeFilterPayload {
     pub token: String,
     pub status: Option<String>,
     pub department_id: Option<i64>,
+    #[allow(dead_code)]
     pub drawer_position_id: Option<i64>,
     #[validate(range(min = 1, max = 500, message = "Page size inválido"))]
     pub page_size: Option<i64>,
@@ -312,6 +314,7 @@ pub struct TerminationPayload {
     pub termination_date: String,
     #[validate(length(max = 500, message = "Motivo deve ter no máximo 500 caracteres"))]
     pub reason: Option<String>,
+    #[allow(dead_code)]
     pub transfer_to_box_id: Option<i64>,
 }
 
@@ -656,6 +659,7 @@ pub struct ArchiveBoxCreatePayload {
     pub data: ArchiveBoxPayload,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BoxWithCount {
     #[serde(rename = "box")]

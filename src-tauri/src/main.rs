@@ -29,16 +29,6 @@ fn main() -> anyhow::Result<()> {
             // Initialize DB asynchronously
             let db = tauri::async_runtime::block_on(async {
                 let db = ArchiveDatabase::connect(db_path).await?;
-
-                let default_login = std::env::var("ARCHIVE_DEFAULT_ADMIN_LOGIN").ok();
-                let default_password = std::env::var("ARCHIVE_DEFAULT_ADMIN_PASSWORD").ok();
-
-                if let (Some(login), Some(password)) = (default_login, default_password) {
-                    if !login.trim().is_empty() && !password.trim().is_empty() {
-                        db.ensure_default_admin(&login, &password).await?;
-                    }
-                }
-
                 Ok::<_, anyhow::Error>(db)
             })?;
 
